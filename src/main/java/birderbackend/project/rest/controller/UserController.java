@@ -34,7 +34,9 @@ public class UserController {
 
     @PostMapping("/registers")
     public ResponseEntity<?> addUser(@RequestBody User user) {
-        if (userRepository.findByUsername(user.getUsername()) == null ) {
+        if (userRepository.findByUsername(user.getUsername()) == null && !user.getUsername().equals("")
+                && !user.getPassword().equals("") && !user.getEmail().equals("") && !user.getAddress().equals("")
+                && !user.getPhoneNumber().equals("") && !user.getFullName().equals("")) {
             User output = userService.save(user);
             return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(output));
         }else {
@@ -44,7 +46,9 @@ public class UserController {
 
     @PostMapping("/registers_farm_employee")
     public ResponseEntity<?> addFarmEmployee(HttpServletRequest request, @RequestBody User farmEmployee) {
-        if (userRepository.findByUsername(farmEmployee.getUsername()) == null ) {
+        if (userRepository.findByUsername(farmEmployee.getUsername()) == null && !farmEmployee.getUsername().equals("")
+                && !farmEmployee.getPassword().equals("") && !farmEmployee.getEmail().equals("") && !farmEmployee.getAddress().equals("")
+                && !farmEmployee.getPhoneNumber().equals("") && !farmEmployee.getFullName().equals("")) {
             String authToken = request.getHeader(this.tokenHeader);
             if (authToken != null && authToken.startsWith("Bearer ")) {
                 authToken = authToken.substring(7);

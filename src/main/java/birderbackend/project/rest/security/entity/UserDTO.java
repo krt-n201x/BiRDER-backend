@@ -1,5 +1,6 @@
 package birderbackend.project.rest.security.entity;
 
+import birderbackend.project.rest.entity.FarmDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
+    FarmDTO affiliation;
     Long id;
     String username;
     String password;
