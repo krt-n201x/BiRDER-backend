@@ -62,7 +62,7 @@ public class AuthenticationRestController {
         result.put("token", token);
         User user = userRepository.findById(((JwtUser) userDetails).getId()).orElse(null);
 //        if (user.getAffiliation() != null) {
-//        result.put("user", LabMapper.INSTANCE.getUserDTO(user.getAffiliation().getHaveUsers()));
+        result.put("user", LabMapper.INSTANCE.getUserAuthDTO(user));
 //        }
         return ResponseEntity.ok(result);
     }

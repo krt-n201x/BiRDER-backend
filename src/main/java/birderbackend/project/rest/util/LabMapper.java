@@ -1,5 +1,6 @@
 package birderbackend.project.rest.util;
 
+import birderbackend.project.rest.security.entity.UserAuthDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -19,7 +20,7 @@ public interface LabMapper {
     FarmDTO getFarmDTO(Farm farm);
     List<FarmDTO> getFarmDTO(List<Farm> farm);
 
-//    @Mapping(target = "authorities", expression = "java(user.getUser().getAuthorities().stream().map(auth -> auth.getName().name()).collect(Collectors.toList()))")
-//    UserDTO getUserDTO(User user);
+    @Mapping(target = "authorities", expression = "java(user.getAuthorities().stream().map(auth -> auth.getName().name()).collect(Collectors.toList()))")
+    UserAuthDTO getUserAuthDTO(User user);
 
 }
