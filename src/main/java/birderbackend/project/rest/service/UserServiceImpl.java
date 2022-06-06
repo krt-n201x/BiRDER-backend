@@ -9,6 +9,9 @@ import birderbackend.project.rest.security.entity.AuthorityName;
 import birderbackend.project.rest.security.entity.User;
 import birderbackend.project.rest.security.repository.AuthorityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -58,5 +62,38 @@ public class UserServiceImpl implements UserService{
         farmEmployee.getAuthorities().add(authority);
 
         return userDao.save(farmEmployee);
+    }
+
+    @Override
+    public User getUser(Long id) {
+        return userDao.getUser(id);
+    }
+
+    @Override
+    public List<User> getAllUser() {
+        return userDao.getUser(Pageable.unpaged()).getContent();
+    }
+
+    @Override
+    public Page<User> getUserListPage(Integer page, Integer pageSize) {
+        return userDao.getUser(PageRequest.of(page,pageSize));
+    }
+
+    @Override
+    public Page<User> getFarmOwner(AuthorityName authoritiesName, Pageable pageable) {
+        return userDao.getFarmOwner(authoritiesName,pageable);
+    }
+
+    @Override
+    public Page<User> getFarmEmployee(AuthorityName authoritiesName, Long affiliation, Pageable pageable) {
+        return userDao.getFarmEmployee(authoritiesName, affiliation, pageable);
+    }
+
+    public Page<User> getSearchFarmList(AuthorityName authoritiesName, String fullName, AuthorityName authoritiesName2, String username, Pageable page) {
+        return userDao.getSearchFarmList(authoritiesName, fullName, authoritiesName2, username, page);
+    }
+
+    public Page<User> getSearchFarmEmployeeList(AuthorityName authoritiesName, Long affiliation, String fullName, AuthorityName authoritiesName2, Long affiliation2, String username, Pageable page) {
+        return userDao.getSearchFarmEmployeeList(authoritiesName, affiliation, fullName, authoritiesName2, affiliation2, username, page);
     }
 }

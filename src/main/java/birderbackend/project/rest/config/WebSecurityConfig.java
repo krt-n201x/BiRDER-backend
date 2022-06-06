@@ -66,9 +66,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/**",  "/refresh").permitAll()
                 .antMatchers(HttpMethod.POST,"/registers").permitAll()
                 .antMatchers(HttpMethod.POST,"/registers_farm_employee").hasRole("OWNER")
+                .antMatchers(HttpMethod.GET,"/viewProfileDetail/{id}").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
+                .antMatchers(HttpMethod.POST,"/updateProfileDetail/{id}").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
+                .antMatchers(HttpMethod.GET,"/viewFarmList").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET,"/viewFarmEmployeeList").hasAnyRole("ADMIN", "OWNER")
+                .antMatchers(HttpMethod.GET,"/searchFarmList").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET,"/searchFarmEmployeeList").hasAnyRole("ADMIN", "OWNER")
 //                .antMatchers(HttpMethod.GET,"/events").permitAll()
 //                .antMatchers(HttpMethod.GET,"/organizers").permitAll()
-
 
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 

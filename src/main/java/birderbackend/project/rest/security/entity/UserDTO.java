@@ -17,7 +17,6 @@ public class UserDTO {
     FarmDTO affiliation;
     Long id;
     String username;
-    String password;
     String email;
     String address;
     String phoneNumber;
