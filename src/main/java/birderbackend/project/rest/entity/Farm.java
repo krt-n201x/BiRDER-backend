@@ -21,4 +21,8 @@ public class Farm {
     @OneToMany (mappedBy = "affiliation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     List<User> haveUsers = new ArrayList<>();
+
+    @OneToMany (mappedBy = "affiliation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    List<Bird> haveBirds = new ArrayList<>();
 }
