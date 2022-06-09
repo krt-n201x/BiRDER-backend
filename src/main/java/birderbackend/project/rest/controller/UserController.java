@@ -164,9 +164,9 @@ public class UserController {
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
                 }
             }
-            else if(user.equals(target)){
-                editAdmin = false;
-            }
+//            else if(user.equals(target)){
+//                editAdmin = false;
+//            }
             else {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
             }
