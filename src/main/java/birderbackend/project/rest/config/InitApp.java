@@ -1,6 +1,10 @@
 package birderbackend.project.rest.config;
 
+import birderbackend.project.rest.entity.Bird;
+import birderbackend.project.rest.entity.BirdStatus;
 import birderbackend.project.rest.entity.Farm;
+import birderbackend.project.rest.repository.BirdRepository;
+import birderbackend.project.rest.repository.BirdStatusRepository;
 import birderbackend.project.rest.repository.FarmRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -29,6 +33,12 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    BirdRepository birdRepository;
+
+    @Autowired
+    BirdStatusRepository birdStatusRepository;
+
     @Override
     @Transactional
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
@@ -55,6 +65,19 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
         farm2.getHaveUsers().add(user5);
         farm2.getHaveUsers().add(user6);
         farm2.getHaveUsers().add(user7);
+
+        addBird();
+        bird1.setAffiliation(farm1);
+        farm1.getHaveBirds().add(bird1);
+        bird2.setAffiliation(farm1);
+        farm1.getHaveBirds().add(bird2);
+        bird3.setAffiliation(farm1);
+        farm1.getHaveBirds().add(bird3);
+
+        bird4.setAffiliation(farm2);
+        farm2.getHaveBirds().add(bird4);
+        bird5.setAffiliation(farm2);
+        farm2.getHaveBirds().add(bird5);
 
     }
 
@@ -150,5 +173,137 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
         userRepository.save(user5);
         userRepository.save(user6);
         userRepository.save(user7);
+    }
+
+    Bird bird1, bird2, bird3, bird4, bird5;
+    private void addBird() {
+
+        BirdStatus status1, status2, status3, status4, status5, status6, status7, status8;
+        status1 = BirdStatus.builder()
+                .birdStatus("Sold")
+                .build();
+        status2 = BirdStatus.builder()
+                .birdStatus("For sale")
+                .build();
+        status3 = BirdStatus.builder()
+                .birdStatus("Available")
+                .build();
+        status4 = BirdStatus.builder()
+                .birdStatus("Paired")
+                .build();
+        status5 = BirdStatus.builder()
+                .birdStatus("Deceased")
+                .build();
+        status6 = BirdStatus.builder()
+                .birdStatus("Exchanged")
+                .build();
+        status7 = BirdStatus.builder()
+                .birdStatus("Lost")
+                .build();
+        status8 = BirdStatus.builder()
+                .birdStatus("Donated")
+                .build();
+
+        birdStatusRepository.save(status1);
+        birdStatusRepository.save(status2);
+        birdStatusRepository.save(status3);
+        birdStatusRepository.save(status4);
+        birdStatusRepository.save(status5);
+        birdStatusRepository.save(status6);
+        birdStatusRepository.save(status7);
+        birdStatusRepository.save(status8);
+
+
+
+        bird1 = Bird.builder()
+                .birdName("Mercury")
+                .birdCode("#00100")
+                .dateOfBirth(Date.from(LocalDate.of(2022, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .birdSpecies("Cockatiel")
+                .birdColor("Red and Orange")
+                .cageNumber("A#010")
+                .sexOfBird("M")
+                .birdImage("https://banner2.cleanpng.com/20180211/pcq/kisspng-bird-cockatiel-dog-cockatoo-rope-parrot-5a807f3e5a04f6.2532320115183706223687.jpg")
+                .birdTreatmentRecord("Disease: Red eyes\n" +
+                        "Symptoms: Got sore and red eye\n" +
+                        "Treatment: Change cage\n" +
+                        "Period of doing treatment: 5 days\n")
+                .birdStatus(status4)
+//                .maleParentId()
+//                .femaleParentId()
+//                .paringBirdId("2")
+//                .affiliation(1)
+                .build();
+        bird2 = Bird.builder()
+                .birdName("Venus")
+                .birdCode("#00200")
+                .dateOfBirth(Date.from(LocalDate.of(2022, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .birdSpecies("Cockatiel")
+                .birdColor("Red and Yellow")
+                .cageNumber("A#010")
+                .sexOfBird("F")
+                .birdImage("https://banner2.cleanpng.com/20180208/fre/kisspng-bird-watercolor-painting-parrot-cockatiel-parrot-5a7c72a75dba85.9314319315181052553839.jpg")
+                .birdTreatmentRecord("Never got disease")
+                .birdStatus(status4)
+//                .maleParentId()
+//                .femaleParentId()
+//                .paringBirdId("2")
+//                .affiliation(1)
+                .build();
+        bird3 = Bird.builder()
+                .birdName("Earth")
+                .birdCode("#00300")
+                .dateOfBirth(Date.from(LocalDate.of(2022, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .birdSpecies("Cockatiel")
+                .birdColor("Red and Green")
+                .cageNumber("A#010")
+                .sexOfBird("F")
+                .birdImage("https://banner2.cleanpng.com/20180223/gpe/kisspng-yellow-collared-lovebird-parrot-budgerigar-black-c-parrot-5a90ab3a318e36.030014651519430458203.jpg")
+                .birdTreatmentRecord("")
+                .birdStatus(status3)
+                .maleParentId(bird1)
+                .femaleParentId(bird2)
+//                .paringBirdId("2")
+//                .affiliation(1)
+                .build();
+        bird4 = Bird.builder()
+                .birdName("Mars")
+                .birdCode("#00001")
+                .dateOfBirth(Date.from(LocalDate.of(2022, 02, 02).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .birdSpecies("Cockatiel")
+                .birdColor("Bright Red and Orange")
+                .cageNumber("A##010")
+                .sexOfBird("M")
+                .birdImage("https://banner2.cleanpng.com/20180613/sw/kisspng-cockatiel-budgerigar-lovebird-parakeet-cockatiel-5b2111eb528f81.5829014615288939313382.jpg")
+                .birdTreatmentRecord("")
+                .birdStatus(status3)
+//                .maleParentId()
+//                .femaleParentId()
+//                .paringBirdId(bird5)
+//                .affiliation(1)
+                .build();
+        bird5 = Bird.builder()
+                .birdName("Jupiter")
+                .birdCode("#00002")
+                .dateOfBirth(Date.from(LocalDate.of(2022, 02, 02).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .birdSpecies("Cockatiel")
+                .birdColor("Bright Red and Yellow")
+                .cageNumber("A##010")
+                .sexOfBird("F")
+                .birdImage("https://banner2.cleanpng.com/20171220/ruq/yellow-parrot-png-images-free-download-5a3aeb99a29e88.95921514151381084166618216.jpg")
+                .birdTreatmentRecord("Never got disease")
+                .birdStatus(status3)
+//                .maleParentId()
+//                .femaleParentId()
+                .paringBirdId(bird4)
+//                .affiliation(1)
+                .build();
+
+        bird4.setParingBirdId(bird5);
+        birdRepository.save(bird1);
+        birdRepository.save(bird2);
+        birdRepository.save(bird3);
+        birdRepository.save(bird4);
+        birdRepository.save(bird5);
     }
 }
