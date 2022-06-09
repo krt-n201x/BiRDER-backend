@@ -10,4 +10,6 @@ public interface FarmDao {
     Page<Farm> getFarm(Pageable pageRequest);
 
     Optional<Farm> findById(Long id);
+
+    Long deleteFarmById(Long id);
 }

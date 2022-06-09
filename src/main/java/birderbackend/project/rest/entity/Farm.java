@@ -18,7 +18,7 @@ public class Farm {
     @EqualsAndHashCode.Exclude
     Long id;
 
-    @OneToMany (mappedBy = "affiliation")
+    @OneToMany (mappedBy = "affiliation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     List<User> haveUsers = new ArrayList<>();
 }

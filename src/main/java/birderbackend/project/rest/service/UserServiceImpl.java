@@ -96,4 +96,8 @@ public class UserServiceImpl implements UserService{
     public Page<User> getSearchFarmEmployeeList(AuthorityName authoritiesName, Long affiliation, String fullName, AuthorityName authoritiesName2, Long affiliation2, String username, Pageable page) {
         return userDao.getSearchFarmEmployeeList(authoritiesName, affiliation, fullName, authoritiesName2, affiliation2, username, page);
     }
+    @Transactional
+    public Long deleteUserById(Long id) {
+        return userDao.deleteUserById(id);
+    }
 }

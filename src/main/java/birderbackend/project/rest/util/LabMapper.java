@@ -25,4 +25,6 @@ public interface LabMapper {
 
     List<UserDTO> getUserDTO(List<User> users);
 
+//    User deleteUserById(Long id);
+
 }

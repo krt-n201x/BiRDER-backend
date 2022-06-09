@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface FarmRepository extends JpaRepository<Farm,Long> {
 
 //    Farm findById(Long farmId);
+    Long deleteFarmById(Long id);
 }

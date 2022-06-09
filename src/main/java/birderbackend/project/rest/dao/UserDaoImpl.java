@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 @Repository
 public class UserDaoImpl implements UserDao{
     @Autowired
@@ -45,4 +48,23 @@ public class UserDaoImpl implements UserDao{
     public Page<User> getSearchFarmEmployeeList(AuthorityName authoritiesName, Long affiliation, String fullName, AuthorityName authoritiesName2, Long affiliation2, String username, Pageable page) {
         return userRepository.findByAuthorities_NameAndAffiliation_IdAndFullNameContainingIgnoreCaseOrAuthorities_NameAndAffiliation_IdAndUsernameContainingIgnoreCase(authoritiesName, affiliation, fullName, authoritiesName2, affiliation2, username, page);
     }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+//    @Override
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+//    @Override
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    public Long deleteUserById(Long id) {
+
+        return userRepository.deleteUserById(id);
+    }
+
 }

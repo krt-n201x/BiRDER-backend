@@ -6,6 +6,7 @@ import birderbackend.project.rest.security.JwtTokenUtil;
 import birderbackend.project.rest.security.entity.AuthorityName;
 import birderbackend.project.rest.security.entity.User;
 import birderbackend.project.rest.security.repository.UserRepository;
+import birderbackend.project.rest.service.FarmService;
 import birderbackend.project.rest.service.UserService;
 import birderbackend.project.rest.util.LabMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class UserController {
 
     @Autowired
     FarmRepository farmRepository;
+
+    @Autowired
+    FarmService farmService;
 
     @PostMapping("/registers")
     public ResponseEntity<?> addUser(@RequestBody User user) {
@@ -221,7 +225,7 @@ public class UserController {
     }
 
     @GetMapping("/viewFarmEmployeeList")
-    ResponseEntity<?> getFarmEmployeeList(@RequestParam(value = "_limit", required = false) Integer perPage
+    public ResponseEntity<?> getFarmEmployeeList(@RequestParam(value = "_limit", required = false) Integer perPage
             , @RequestParam(value = "_page", required = false) Integer page, @RequestParam(value = "affiliation", required = false) Long affiliation){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -290,5 +294,57 @@ public class UserController {
         responseHeader.set("x-total-count", String.valueOf(pageOutput.getTotalElements()));
         return new ResponseEntity<>(LabMapper.INSTANCE.getUserDTO(pageOutput.getContent()), responseHeader, HttpStatus.OK);
 
-}
+    }
+
+    @DeleteMapping("/deleteAccount/{id}")
+    public ResponseEntity<?> deleteAccount(@PathVariable("id") Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(auth.getName());
+        User target = userService.getUser(id);
+
+        if (user != null && target != null) {
+            if (user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+                if(user.equals(target)){
+                    userService.deleteUserById(id);
+                    return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
+                }else if (target.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_OWNER)) {
+                    Farm ownerAffiliation = target.getAffiliation();
+                    farmService.deleteFarmById(ownerAffiliation.getId());
+                    return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
+                }else if (target.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)) {
+                    userService.deleteUserById(id);
+                    return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
+                }else {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                }
+            }
+            else if (user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_OWNER)) {
+                if(user.equals(target)){
+                    Farm ownerAffiliation = user.getAffiliation();
+                    farmService.deleteFarmById(ownerAffiliation.getId());
+                    return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
+                }
+                else if (target.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
+                    Farm ownerAffiliation = user.getAffiliation();
+                    Farm employeeAffiliation = target.getAffiliation();
+                    if (ownerAffiliation.equals(employeeAffiliation)) {
+                        userService.deleteUserById(id);
+                        return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
+                    }
+                    else {
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    }
+                }
+                else {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                }
+            }
+            else {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+            }
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+        }
+    }
 }

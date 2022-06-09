@@ -23,4 +23,7 @@ public interface UserService {
     Page<User> getSearchFarmList(AuthorityName authoritiesName, String fullName, AuthorityName authoritiesName2, String username, Pageable page);
 
     Page<User> getSearchFarmEmployeeList(AuthorityName authoritiesName, Long affiliation, String fullName, AuthorityName authoritiesName2, Long affiliation2, String username, Pageable page);
+
+    Long deleteUserById(Long id);
+
 }

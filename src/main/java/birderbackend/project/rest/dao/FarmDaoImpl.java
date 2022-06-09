@@ -23,4 +23,9 @@ public class FarmDaoImpl implements FarmDao{
     public Optional<Farm> findById(Long id) {
         return farmRepository.findById(id);
     }
+
+    public Long deleteFarmById(Long id) {
+
+        return farmRepository.deleteFarmById(id);
+    }
 }

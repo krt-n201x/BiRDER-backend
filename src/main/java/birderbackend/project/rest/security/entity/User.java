@@ -66,6 +66,11 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Authority> authorities = new ArrayList<>();
 
-    @ManyToOne
+//    @ManyToOne
+//    Farm affiliation;
+
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn
+    @ManyToOne(fetch = FetchType.EAGER)
     Farm affiliation;
 }

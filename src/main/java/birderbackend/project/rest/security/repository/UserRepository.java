@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import birderbackend.project.rest.security.entity.User;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
 
@@ -19,4 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findByAuthorities_NameAndFullNameContainingIgnoreCaseOrAuthorities_NameAndUsernameContainingIgnoreCase(AuthorityName authoritiesName, String fullName, AuthorityName authoritiesName2, String username, Pageable pageRequest);
 
     Page<User> findByAuthorities_NameAndAffiliation_IdAndFullNameContainingIgnoreCaseOrAuthorities_NameAndAffiliation_IdAndUsernameContainingIgnoreCase(AuthorityName authoritiesName, Long affiliation, String fullName, AuthorityName authoritiesName2, Long affiliation2, String username, Pageable pageRequest);
+
+    Long deleteUserById(Long id);
 }
