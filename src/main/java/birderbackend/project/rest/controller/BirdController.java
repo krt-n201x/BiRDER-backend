@@ -126,4 +126,31 @@ public class BirdController {
             return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
         }
     }
+
+    @GetMapping("/viewBirdDetail/{id}")
+    public ResponseEntity<?> viewBirdDetail(@PathVariable Long id){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(auth.getName());
+
+        Optional<Bird> bird =  birdRepository.findById(id);
+
+        if(bird.isPresent()){
+            Bird birdEntity = bird.get();
+            if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+                Long affiliation = user.getAffiliation().getId();
+
+                if(birdEntity.getAffiliation().getId().equals(affiliation)){
+                    return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(birdEntity));
+                }else{
+                    return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+                }
+            }else{
+                return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(birdEntity));
+            }
+
+        }else{
+            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+        }
+    }
 }
