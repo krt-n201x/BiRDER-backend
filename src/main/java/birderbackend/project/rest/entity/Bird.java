@@ -53,8 +53,9 @@ public class Bird {
     @NotNull
     private String birdSpecies;
 
-    @OneToOne
-    BirdStatus birdStatus;
+    @Column(name = "BIRDSTATUS", length = 50)
+    @NotNull
+    private String birdStatus;
 
     @OneToOne
     Bird maleParentId;

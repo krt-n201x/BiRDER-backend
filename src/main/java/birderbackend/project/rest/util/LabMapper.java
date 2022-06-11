@@ -27,4 +27,6 @@ public interface LabMapper {
 
 //    User deleteUserById(Long id);
 
+    List<BirdDTO> getBirdDTO(List<Bird> birds);
+
 }
