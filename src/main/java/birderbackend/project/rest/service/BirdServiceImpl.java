@@ -39,4 +39,9 @@ public class BirdServiceImpl implements BirdService{
         return birdDao.saveBirdInfo(birdInfo);
     }
 
+    @Override
+    public Bird getBird(Long id) {
+        return birdDao.getBird(id);
+    }
+
 }

@@ -35,4 +35,9 @@ public class BirdDaoImpl implements BirdDao{
     public Bird saveBirdInfo(Bird birdInfo) {
         return birdRepository.save(birdInfo);
     }
+
+    @Override
+    public Bird getBird(Long id) {
+        return birdRepository.findById(id).orElse(null);
+    }
 }

@@ -153,4 +153,46 @@ public class BirdController {
             return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
         }
     }
+
+    @PostMapping("/updateBirdDetail/{id}")
+    public ResponseEntity<?> updateBirdDetail(@RequestBody Bird birdInfo, @PathVariable Long id
+            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
+
+        Bird target = birdService.getBird(id);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(auth.getName());
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        if (birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCaseOrAffiliation_IdAndBirdCodeContainingIgnoreCase(
+                affiliation, birdInfo.getBirdName(), affiliation, birdInfo.getBirdCode()) == null && !birdInfo.getBirdName().equals("")
+                && !birdInfo.getBirdCode().equals("") && !birdInfo.getDateOfBirth().equals("") && !birdInfo.getBirdColor().equals("")
+                && !birdInfo.getCageNumber().equals("") && !birdInfo.getSexOfBird().equals("") && !birdInfo.getBirdImage().equals("")
+                && !birdInfo.getBirdSpecies().equals("") && !birdInfo.getBirdStatus().equals("")) {
+
+
+            target.setBirdName(birdInfo.getBirdName());
+            target.setBirdCode(birdInfo.getBirdCode());
+            target.setDateOfBirth(birdInfo.getDateOfBirth());
+            target.setBirdColor(birdInfo.getBirdColor());
+            target.setCageNumber(birdInfo.getCageNumber());
+            target.setSexOfBird(birdInfo.getSexOfBird());
+            target.setBirdImage(birdInfo.getBirdImage());
+            target.setBirdSpecies(birdInfo.getBirdSpecies());
+            target.setBirdStatus(birdInfo.getBirdStatus());
+            target.setMaleParentId(birdInfo.getMaleParentId());
+            target.setFemaleParentId(birdInfo.getFemaleParentId());
+            if(!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
+                target.setParingBirdId(birdInfo.getParingBirdId());
+            }
+
+            Bird output = birdService.saveBirdInfo(target);
+            return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
+
+        }else {
+            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+        }
+    }
 }
