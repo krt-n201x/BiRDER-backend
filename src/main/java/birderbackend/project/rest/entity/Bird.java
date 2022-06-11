@@ -17,11 +17,11 @@ public class Bird {
     @EqualsAndHashCode.Exclude
     Long id;
 
-    @Column(name = "BIRDNAME", length = 25, unique = true)
+    @Column(name = "BIRDNAME", length = 25)
     @NotNull
     private String birdName;
 
-    @Column(name = "BIRDCODE", length = 15, unique = true)
+    @Column(name = "BIRDCODE", length = 15)
     @NotNull
     private String birdCode;
 

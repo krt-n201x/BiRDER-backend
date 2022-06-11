@@ -13,4 +13,5 @@ public interface BirdDao {
 
     Page<Bird> getSearchBirdList(Long affiliation, String birdName, Long affiliation2, String birdCode, Long affiliation3, String birdSpecies, Long affiliation4, String birdStatus, Pageable page);
 
+    Bird saveBirdInfo(Bird birdInfo);
 }

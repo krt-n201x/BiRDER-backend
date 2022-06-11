@@ -30,4 +30,9 @@ public class BirdDaoImpl implements BirdDao{
     public Page<Bird> getSearchBirdList(Long affiliation, String birdName, Long affiliation2, String birdCode, Long affiliation3, String birdSpecies, Long affiliation4, String birdStatus, Pageable page) {
         return birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCaseOrAffiliation_IdAndBirdCodeContainingIgnoreCaseOrAffiliation_IdAndBirdSpeciesContainingIgnoreCaseOrAffiliation_IdAndBirdStatusContainingIgnoreCase(affiliation, birdName, affiliation2, birdCode, affiliation3, birdSpecies, affiliation4, birdStatus, page);
     }
+
+    @Override
+    public Bird saveBirdInfo(Bird birdInfo) {
+        return birdRepository.save(birdInfo);
+    }
 }

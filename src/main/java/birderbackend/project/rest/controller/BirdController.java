@@ -1,6 +1,9 @@
 package birderbackend.project.rest.controller;
 
 import birderbackend.project.rest.entity.Bird;
+import birderbackend.project.rest.entity.Farm;
+import birderbackend.project.rest.repository.BirdRepository;
+import birderbackend.project.rest.repository.FarmRepository;
 import birderbackend.project.rest.security.entity.AuthorityName;
 import birderbackend.project.rest.security.entity.User;
 import birderbackend.project.rest.security.repository.UserRepository;
@@ -15,9 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @RestController
 public class BirdController {
@@ -30,6 +36,12 @@ public class BirdController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    BirdRepository birdRepository;
+
+    @Autowired
+    FarmRepository farmRepository;
 
 
     @GetMapping("/viewBirdList")
@@ -79,5 +91,39 @@ public class BirdController {
         responseHeader.set("x-total-count", String.valueOf(pageOutput.getTotalElements()));
         return new ResponseEntity<>(LabMapper.INSTANCE.getBirdDTO(pageOutput.getContent()), responseHeader, HttpStatus.OK);
 
+    }
+
+    @PostMapping("/createBirdDetail")
+    public ResponseEntity<?> createBirdDetail(@RequestBody Bird birdInfo
+            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(auth.getName());
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        if (birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCaseOrAffiliation_IdAndBirdCodeContainingIgnoreCase(
+                affiliation, birdInfo.getBirdName(), affiliation, birdInfo.getBirdCode()) == null && !birdInfo.getBirdName().equals("")
+                && !birdInfo.getBirdCode().equals("") && !birdInfo.getDateOfBirth().equals("") && !birdInfo.getBirdColor().equals("")
+                && !birdInfo.getCageNumber().equals("") && !birdInfo.getSexOfBird().equals("") && !birdInfo.getBirdImage().equals("")
+                && !birdInfo.getBirdSpecies().equals("") && !birdInfo.getBirdStatus().equals("")) {
+
+            if(user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
+                birdInfo.setParingBirdId(null);
+            }
+
+            Optional<Farm> farm =  farmRepository.findById(affiliation);
+            Farm farmEntity = farm.get();
+            birdInfo.setAffiliation(farmEntity);
+            farmEntity.getHaveBirds().add(birdInfo);
+
+            Bird output = birdService.saveBirdInfo(birdInfo);
+            return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
+
+        }else {
+            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+        }
     }
 }
