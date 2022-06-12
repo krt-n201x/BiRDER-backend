@@ -199,6 +199,9 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
 //        status8 = BirdStatus.builder()
 //                .birdStatus("Donated")
 //                .build();
+//        status8 = BirdStatus.builder()
+//                .birdStatus("Unavailable")
+//                .build();
 //
 //        birdStatusRepository.save(status1);
 //        birdStatusRepository.save(status2);

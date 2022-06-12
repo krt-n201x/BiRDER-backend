@@ -195,4 +195,43 @@ public class BirdController {
             return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
         }
     }
+
+    @PostMapping("/deleteBird/{id}")
+    public ResponseEntity<?> deleteBird(@PathVariable("id") Long id) {
+
+        Bird target = birdService.getBird(id);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(auth.getName());
+        Long affiliation = null;
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        if (target != null) {
+            if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+                if(target.getAffiliation().getId().equals(affiliation)){
+                    target.setBirdStatus("Unavailable");
+//                    target.setMaleParentId(null);
+//                    target.setFemaleParentId(null);
+//                    target.setParingBirdId(null);
+                    Bird output = birdService.saveBirdInfo(target);
+//                    birdService.deleteBirdById(output.getId());
+                    return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
+                }else {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                }
+            }else {
+                target.setBirdStatus("Unavailable");
+//                target.setMaleParentId(null);
+//                target.setFemaleParentId(null);
+//                target.setParingBirdId(null);
+                Bird output = birdService.saveBirdInfo(target);
+//                birdService.deleteBirdById(output.getId());
+                return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
+            }
+        }else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+        }
+    }
 }

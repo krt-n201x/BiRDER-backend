@@ -40,4 +40,8 @@ public class BirdDaoImpl implements BirdDao{
     public Bird getBird(Long id) {
         return birdRepository.findById(id).orElse(null);
     }
+
+    public Long deleteBirdById(Long id) {
+        return birdRepository.deleteBirdById(id);
+    }
 }

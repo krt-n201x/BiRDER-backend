@@ -44,4 +44,9 @@ public class BirdServiceImpl implements BirdService{
         return birdDao.getBird(id);
     }
 
+    @Transactional
+    public Long deleteBirdById(Long id) {
+        return birdDao.deleteBirdById(id);
+    }
+
 }

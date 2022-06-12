@@ -14,4 +14,6 @@ public interface BirdService {
     Bird saveBirdInfo(Bird birdInfo);
 
     Bird getBird(Long id);
+
+    Long deleteBirdById(Long id);
 }
