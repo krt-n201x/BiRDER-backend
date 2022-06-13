@@ -52,7 +52,8 @@ public class UserController {
             User output = userService.save(user);
             return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(output));
         }else {
-            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not register, some data might not correct.");
         }
     }
 
@@ -75,7 +76,8 @@ public class UserController {
             return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(output));
 //            return null;
         }else {
-            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not register, some data might not correct.");
         }
     }
 
@@ -91,7 +93,7 @@ public class UserController {
                     return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
                 }
                 else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
                 }
             }
             else if (user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_OWNER)) {
@@ -105,22 +107,22 @@ public class UserController {
                         return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
                     }
                     else {
-                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
                     }
                 }
                 else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
                 }
             }
             else if(user.equals(target)){
                 return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
             }
             else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
             }
         }
         else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
         }
     }
 
@@ -140,7 +142,7 @@ public class UserController {
                     editAdmin = true;
                 }
                 else if (target.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN) && !user.equals(target)) {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
                 }
                 else {
                     editAdmin = false;
@@ -157,22 +159,22 @@ public class UserController {
                         editAdmin = false;
                     }
                     else {
-                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
                     }
                 }
                 else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
                 }
             }
 //            else if(user.equals(target)){
 //                editAdmin = false;
 //            }
             else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
             }
         }
         else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
         }
 
         if(editAdmin){
@@ -200,11 +202,11 @@ public class UserController {
                     return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
                 }
                 else { // Wrong Password
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Password not correct");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Password not correct.");
                 }
 
             } else { // Wrong Password
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Password not correct");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Password not correct.");
             }
         }else{
             userRepository.save(target);
@@ -296,7 +298,7 @@ public class UserController {
 
     }
 
-    @DeleteMapping("/deleteAccount/{id}")
+    @PostMapping("/deleteAccount/{id}")
     public ResponseEntity<?> deleteAccount(@PathVariable("id") Long id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName());
@@ -315,7 +317,7 @@ public class UserController {
                     userService.deleteUserById(id);
                     return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
                 }else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
                 }
             }
             else if (user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_OWNER)) {
@@ -332,19 +334,19 @@ public class UserController {
                         return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
                     }
                     else {
-                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
                     }
                 }
                 else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
                 }
             }
             else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
             }
         }
         else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
         }
     }
 }

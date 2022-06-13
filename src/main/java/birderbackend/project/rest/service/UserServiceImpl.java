@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService{
         Farm farm = farmRepository.save(Farm.builder().build());
         farm.getHaveUsers().add(user);
         user.setAffiliation(farm);
-        farmRepository.save(farm);
+//        farmRepository.save(farm);
 
         return userDao.save(user);
     }

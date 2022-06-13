@@ -23,3 +23,7 @@ jwt:
     authentication:
       path: auth
       refresh: refresh
+server:
+  error:
+    include-message: ALWAYS
+    include-stacktrace: NEVER

@@ -104,26 +104,31 @@ public class BirdController {
             affiliation = user.getAffiliation().getId();
         }
 
-        if (birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCaseOrAffiliation_IdAndBirdCodeContainingIgnoreCase(
-                affiliation, birdInfo.getBirdName(), affiliation, birdInfo.getBirdCode()) == null && !birdInfo.getBirdName().equals("")
+        if (       !birdInfo.getBirdName().equals("")
                 && !birdInfo.getBirdCode().equals("") && !birdInfo.getDateOfBirth().equals("") && !birdInfo.getBirdColor().equals("")
                 && !birdInfo.getCageNumber().equals("") && !birdInfo.getSexOfBird().equals("") && !birdInfo.getBirdImage().equals("")
                 && !birdInfo.getBirdSpecies().equals("") && !birdInfo.getBirdStatus().equals("")) {
+            if(birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCaseOrAffiliation_IdAndBirdCodeContainingIgnoreCase(
+                    affiliation, birdInfo.getBirdName(), affiliation, birdInfo.getBirdCode()) == null){
+                if(user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
+                    birdInfo.setParingBirdId(null);
+                }
 
-            if(user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
-                birdInfo.setParingBirdId(null);
+                Optional<Farm> farm =  farmRepository.findById(affiliation);
+                Farm farmEntity = farm.get();
+                birdInfo.setAffiliation(farmEntity);
+                farmEntity.getHaveBirds().add(birdInfo);
+
+                Bird output = birdService.saveBirdInfo(birdInfo);
+                return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
+            }else {
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird, some data might not correct.");
             }
 
-            Optional<Farm> farm =  farmRepository.findById(affiliation);
-            Farm farmEntity = farm.get();
-            birdInfo.setAffiliation(farmEntity);
-            farmEntity.getHaveBirds().add(birdInfo);
-
-            Bird output = birdService.saveBirdInfo(birdInfo);
-            return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
-
         }else {
-            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird, some data might not correct.");
         }
     }
 
@@ -143,14 +148,17 @@ public class BirdController {
                 if(birdEntity.getAffiliation().getId().equals(affiliation)){
                     return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(birdEntity));
                 }else{
-                    return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//                    return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
+
                 }
             }else{
                 return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(birdEntity));
             }
 
         }else{
-            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
         }
     }
 
@@ -166,33 +174,39 @@ public class BirdController {
             affiliation = user.getAffiliation().getId();
         }
 
-        if (birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCaseOrAffiliation_IdAndBirdCodeContainingIgnoreCase(
-                affiliation, birdInfo.getBirdName(), affiliation, birdInfo.getBirdCode()) == null && !birdInfo.getBirdName().equals("")
+        if (       !birdInfo.getBirdName().equals("")
                 && !birdInfo.getBirdCode().equals("") && !birdInfo.getDateOfBirth().equals("") && !birdInfo.getBirdColor().equals("")
                 && !birdInfo.getCageNumber().equals("") && !birdInfo.getSexOfBird().equals("") && !birdInfo.getBirdImage().equals("")
                 && !birdInfo.getBirdSpecies().equals("") && !birdInfo.getBirdStatus().equals("")) {
 
+            if(birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCaseOrAffiliation_IdAndBirdCodeContainingIgnoreCase(
+                    affiliation, birdInfo.getBirdName(), affiliation, birdInfo.getBirdCode()) == null){
+                target.setBirdName(birdInfo.getBirdName());
+                target.setBirdCode(birdInfo.getBirdCode());
+                target.setDateOfBirth(birdInfo.getDateOfBirth());
+                target.setBirdColor(birdInfo.getBirdColor());
+                target.setCageNumber(birdInfo.getCageNumber());
+                target.setSexOfBird(birdInfo.getSexOfBird());
+                target.setBirdImage(birdInfo.getBirdImage());
+                target.setBirdSpecies(birdInfo.getBirdSpecies());
+                target.setBirdStatus(birdInfo.getBirdStatus());
+                target.setMaleParentId(birdInfo.getMaleParentId());
+                target.setFemaleParentId(birdInfo.getFemaleParentId());
+                if(!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
+                    target.setParingBirdId(birdInfo.getParingBirdId());
+                }
 
-            target.setBirdName(birdInfo.getBirdName());
-            target.setBirdCode(birdInfo.getBirdCode());
-            target.setDateOfBirth(birdInfo.getDateOfBirth());
-            target.setBirdColor(birdInfo.getBirdColor());
-            target.setCageNumber(birdInfo.getCageNumber());
-            target.setSexOfBird(birdInfo.getSexOfBird());
-            target.setBirdImage(birdInfo.getBirdImage());
-            target.setBirdSpecies(birdInfo.getBirdSpecies());
-            target.setBirdStatus(birdInfo.getBirdStatus());
-            target.setMaleParentId(birdInfo.getMaleParentId());
-            target.setFemaleParentId(birdInfo.getFemaleParentId());
-            if(!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
-                target.setParingBirdId(birdInfo.getParingBirdId());
+                Bird output = birdService.saveBirdInfo(target);
+                return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
+            }
+            else {
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not update bird, some data might not correct.");
             }
 
-            Bird output = birdService.saveBirdInfo(target);
-            return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
-
         }else {
-            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not update bird, some data might not correct.");
         }
     }
 
@@ -219,7 +233,7 @@ public class BirdController {
 //                    birdService.deleteBirdById(output.getId());
                     return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
                 }else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
                 }
             }else {
                 target.setBirdStatus("Unavailable");
@@ -231,7 +245,7 @@ public class BirdController {
                 return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
             }
         }else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
         }
     }
 }
