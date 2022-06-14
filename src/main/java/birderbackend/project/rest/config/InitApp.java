@@ -74,6 +74,16 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
         farm2.getHaveBirds().add(bird4);
         bird5.setAffiliation(farm2);
         farm2.getHaveBirds().add(bird5);
+        bird6.setAffiliation(farm2);
+        farm2.getHaveBirds().add(bird6);
+        bird7.setAffiliation(farm2);
+        farm2.getHaveBirds().add(bird7);
+        bird8.setAffiliation(farm2);
+        farm2.getHaveBirds().add(bird8);
+        bird9.setAffiliation(farm2);
+        farm2.getHaveBirds().add(bird9);
+        bird10.setAffiliation(farm2);
+        farm2.getHaveBirds().add(bird10);
 
     }
 
@@ -171,7 +181,7 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
         userRepository.save(user7);
     }
 
-    Bird bird1, bird2, bird3, bird4, bird5;
+    Bird bird1, bird2, bird3, bird4, bird5, bird6, bird7, bird8, bird9, bird10;
     private void addBird() {
 
 //        BirdStatus status1, status2, status3, status4, status5, status6, status7, status8;
@@ -258,7 +268,7 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .cageNumber("A#010")
                 .sexOfBird("F")
                 .birdImage("https://banner2.cleanpng.com/20180223/gpe/kisspng-yellow-collared-lovebird-parrot-budgerigar-black-c-parrot-5a90ab3a318e36.030014651519430458203.jpg")
-                .birdTreatmentRecord("")
+                .birdTreatmentRecord("Nothing")
                 .birdStatus("Available")
                 .maleParentId(bird1)
                 .femaleParentId(bird2)
@@ -274,7 +284,7 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .cageNumber("A##010")
                 .sexOfBird("M")
                 .birdImage("https://banner2.cleanpng.com/20180613/sw/kisspng-cockatiel-budgerigar-lovebird-parakeet-cockatiel-5b2111eb528f81.5829014615288939313382.jpg")
-                .birdTreatmentRecord("")
+                .birdTreatmentRecord("Nothing")
                 .birdStatus("Available")
 //                .maleParentId()
 //                .femaleParentId()
@@ -297,6 +307,86 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .paringBirdId(bird4)
 //                .affiliation(1)
                 .build();
+        bird6 = Bird.builder()
+                .birdName("Saturn")
+                .birdCode("#00A00")
+                .dateOfBirth(Date.from(LocalDate.of(2022, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .birdSpecies("Cockatiel")
+                .birdColor("Red and Orange")
+                .cageNumber("AA#010")
+                .sexOfBird("M")
+                .birdImage("https://banner2.cleanpng.com/20180211/pcq/kisspng-bird-cockatiel-dog-cockatoo-rope-parrot-5a807f3e5a04f6.2532320115183706223687.jpg")
+                .birdTreatmentRecord("No record")
+                .birdStatus("Available")
+//                .maleParentId()
+//                .femaleParentId()
+//                .paringBirdId("2")
+//                .affiliation(1)
+                .build();
+        bird7 = Bird.builder()
+                .birdName("Uranus")
+                .birdCode("#00B00")
+                .dateOfBirth(Date.from(LocalDate.of(2022, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .birdSpecies("Cockatiel")
+                .birdColor("Red and Orange")
+                .cageNumber("AA#010")
+                .sexOfBird("M")
+                .birdImage("https://banner2.cleanpng.com/20180211/pcq/kisspng-bird-cockatiel-dog-cockatoo-rope-parrot-5a807f3e5a04f6.2532320115183706223687.jpg")
+                .birdTreatmentRecord("No record")
+                .birdStatus("Available")
+//                .maleParentId()
+//                .femaleParentId()
+//                .paringBirdId("2")
+//                .affiliation(1)
+                .build();
+        bird8 = Bird.builder()
+                .birdName("Neptune")
+                .birdCode("#00C00")
+                .dateOfBirth(Date.from(LocalDate.of(2022, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .birdSpecies("Cockatiel")
+                .birdColor("Red and Orange")
+                .cageNumber("AA#010")
+                .sexOfBird("F")
+                .birdImage("https://banner2.cleanpng.com/20180211/pcq/kisspng-bird-cockatiel-dog-cockatoo-rope-parrot-5a807f3e5a04f6.2532320115183706223687.jpg")
+                .birdTreatmentRecord("No record")
+                .birdStatus("Available")
+//                .maleParentId()
+//                .femaleParentId()
+//                .paringBirdId("2")
+//                .affiliation(1)
+                .build();
+        bird9 = Bird.builder()
+                .birdName("Pluto")
+                .birdCode("#00D00")
+                .dateOfBirth(Date.from(LocalDate.of(2022, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .birdSpecies("Cockatiel")
+                .birdColor("Red and Orange")
+                .cageNumber("AA#010")
+                .sexOfBird("F")
+                .birdImage("https://banner2.cleanpng.com/20180211/pcq/kisspng-bird-cockatiel-dog-cockatoo-rope-parrot-5a807f3e5a04f6.2532320115183706223687.jpg")
+                .birdTreatmentRecord("No record")
+                .birdStatus("Available")
+//                .maleParentId()
+//                .femaleParentId()
+//                .paringBirdId("2")
+//                .affiliation(1)
+                .build();
+        bird10 = Bird.builder()
+                .birdName("SunMoon")
+                .birdCode("#00E00")
+                .dateOfBirth(Date.from(LocalDate.of(2022, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .birdSpecies("Cockatiel")
+                .birdColor("Red and Orange")
+                .cageNumber("AA#010")
+                .sexOfBird("F")
+                .birdImage("https://banner2.cleanpng.com/20180211/pcq/kisspng-bird-cockatiel-dog-cockatoo-rope-parrot-5a807f3e5a04f6.2532320115183706223687.jpg")
+                .birdTreatmentRecord("No record")
+                .birdStatus("Available")
+//                .maleParentId()
+//                .femaleParentId()
+//                .paringBirdId("2")
+//                .affiliation(1)
+                .build();
 
         bird4.setParingBirdId(bird5);
         birdRepository.save(bird1);
@@ -304,5 +394,10 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
         birdRepository.save(bird3);
         birdRepository.save(bird4);
         birdRepository.save(bird5);
+        birdRepository.save(bird6);
+        birdRepository.save(bird7);
+        birdRepository.save(bird8);
+        birdRepository.save(bird9);
+        birdRepository.save(bird10);
     }
 }

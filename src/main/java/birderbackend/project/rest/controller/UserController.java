@@ -217,7 +217,7 @@ public class UserController {
     @GetMapping("/viewFarmList")
     public ResponseEntity<?> getFarmList(@RequestParam(value = "_limit", required = false) Integer perPage
             , @RequestParam(value = "_page", required = false) Integer page) {
-        perPage = perPage == null ? 3 : perPage;
+        perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
         Page<User> pageOutput;
         pageOutput = userService.getFarmOwner(AuthorityName.ROLE_OWNER, PageRequest.of(page - 1, perPage));
@@ -233,7 +233,7 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName());
 
-        perPage = perPage == null ? 3 : perPage;
+        perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
         Page<User> pageOutput;
 
@@ -258,7 +258,7 @@ public class UserController {
             , @RequestParam(value = "fullName", required = false) String fullName
             , @RequestParam(value = "username", required = false) String username) {
 
-        perPage = perPage == null ? 3 : perPage;
+        perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
         Page<User> pageOutput;
 //        if (fullName == null) {
@@ -282,7 +282,7 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName());
 
-        perPage = perPage == null ? 3 : perPage;
+        perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
         Page<User> pageOutput;
 

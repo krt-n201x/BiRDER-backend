@@ -51,7 +51,7 @@ public class BirdController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName());
 
-        perPage = perPage == null ? 3 : perPage;
+        perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
         Page<Bird> pageOutput;
 
@@ -77,7 +77,7 @@ public class BirdController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName());
 
-        perPage = perPage == null ? 3 : perPage;
+        perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
         Page<Bird> pageOutput;
 
@@ -179,8 +179,11 @@ public class BirdController {
                 && !birdInfo.getCageNumber().equals("") && !birdInfo.getSexOfBird().equals("") && !birdInfo.getBirdImage().equals("")
                 && !birdInfo.getBirdSpecies().equals("") && !birdInfo.getBirdStatus().equals("")) {
 
-            if(birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCaseOrAffiliation_IdAndBirdCodeContainingIgnoreCase(
-                    affiliation, birdInfo.getBirdName(), affiliation, birdInfo.getBirdCode()) == null){
+
+            if((birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCase(affiliation, birdInfo.getBirdName())== null ||
+                    birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCase(affiliation, birdInfo.getBirdName()).getId().equals(target.getId()))&&
+               (birdRepository.findByAffiliation_IdAndBirdCodeContainingIgnoreCase(affiliation, birdInfo.getBirdCode())== null ||
+                    birdRepository.findByAffiliation_IdAndBirdCodeContainingIgnoreCase(affiliation, birdInfo.getBirdCode()).getId().equals(target.getId()))){
                 target.setBirdName(birdInfo.getBirdName());
                 target.setBirdCode(birdInfo.getBirdCode());
                 target.setDateOfBirth(birdInfo.getDateOfBirth());
