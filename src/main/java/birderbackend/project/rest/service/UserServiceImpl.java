@@ -100,4 +100,14 @@ public class UserServiceImpl implements UserService{
     public Long deleteUserById(Long id) {
         return userDao.deleteUserById(id);
     }
+
+    @Override
+    public User findByUsername(String username) {
+        return userDao.findByUsername(username);
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userDao.findById(id);
+    }
 }

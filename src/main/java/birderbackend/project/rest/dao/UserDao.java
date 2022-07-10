@@ -21,4 +21,9 @@ public interface UserDao {
     Page<User> getSearchFarmEmployeeList(AuthorityName authoritiesName, Long affiliation, String fullName, AuthorityName authoritiesName2, Long affiliation2, String username, Pageable page);
 
     Long deleteUserById(Long id);
+
+    User findByUsername(String username);
+
+    User findById(Long id);
+
 }

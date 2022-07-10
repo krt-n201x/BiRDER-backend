@@ -17,5 +17,12 @@ public interface BirdDao {
 
     Bird getBird(Long id);
 
-    Long deleteBirdById(Long id);
+//    Long deleteBirdById(Long id);
+
+    Bird getSearchByBirdNameBirdCode(Long affiliation, String birdName, Long affiliation2, String birdCode);
+
+    Bird getSearchByBirdName(Long affiliation, String birdName);
+
+    Bird getSearchByBirdCode(Long affiliation, String birdCode);
+
 }

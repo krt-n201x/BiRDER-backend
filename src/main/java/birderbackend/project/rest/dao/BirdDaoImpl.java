@@ -41,7 +41,22 @@ public class BirdDaoImpl implements BirdDao{
         return birdRepository.findById(id).orElse(null);
     }
 
-    public Long deleteBirdById(Long id) {
-        return birdRepository.deleteBirdById(id);
+    @Override
+    public Bird getSearchByBirdNameBirdCode(Long affiliation, String birdName, Long affiliation2, String birdCode) {
+        return birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCaseOrAffiliation_IdAndBirdCodeContainingIgnoreCase(affiliation, birdName, affiliation2, birdCode);
     }
+
+    @Override
+    public Bird getSearchByBirdName(Long affiliation, String birdName) {
+        return birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCase(affiliation, birdName);
+    }
+
+    @Override
+    public Bird getSearchByBirdCode(Long affiliation, String birdCode) {
+        return birdRepository.findByAffiliation_IdAndBirdCodeContainingIgnoreCase(affiliation, birdCode);
+    }
+
+//    public Long deleteBirdById(Long id) {return birdRepository.deleteBirdById(id);}
+
+
 }

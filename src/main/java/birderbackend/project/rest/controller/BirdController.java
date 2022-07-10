@@ -1,13 +1,12 @@
 package birderbackend.project.rest.controller;
 
 import birderbackend.project.rest.entity.Bird;
+import birderbackend.project.rest.entity.BirdDTO;
 import birderbackend.project.rest.entity.Farm;
-import birderbackend.project.rest.repository.BirdRepository;
-import birderbackend.project.rest.repository.FarmRepository;
 import birderbackend.project.rest.security.entity.AuthorityName;
 import birderbackend.project.rest.security.entity.User;
-import birderbackend.project.rest.security.repository.UserRepository;
 import birderbackend.project.rest.service.BirdService;
+import birderbackend.project.rest.service.FarmService;
 import birderbackend.project.rest.service.UserService;
 import birderbackend.project.rest.util.LabMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 public class BirdController {
@@ -35,13 +33,7 @@ public class BirdController {
     UserService userService;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    BirdRepository birdRepository;
-
-    @Autowired
-    FarmRepository farmRepository;
+    FarmService farmService;
 
 
     @GetMapping("/viewBirdList")
@@ -49,7 +41,7 @@ public class BirdController {
             , @RequestParam(value = "_page", required = false) Integer page, @RequestParam(value = "affiliation", required = false) Long affiliation){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName());
+        User user = userService.findByUsername(auth.getName());
 
         perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
@@ -75,7 +67,7 @@ public class BirdController {
             , @RequestParam(value = "affiliation", required = false) Long affiliation) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName());
+        User user = userService.findByUsername(auth.getName());
 
         perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
@@ -98,7 +90,7 @@ public class BirdController {
             , @RequestParam(value = "affiliation", required = false) Long affiliation) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName());
+        User user = userService.findByUsername(auth.getName());
 
         if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
             affiliation = user.getAffiliation().getId();
@@ -108,13 +100,13 @@ public class BirdController {
                 && !birdInfo.getBirdCode().equals("") && !birdInfo.getDateOfBirth().equals("") && !birdInfo.getBirdColor().equals("")
                 && !birdInfo.getCageNumber().equals("") && !birdInfo.getSexOfBird().equals("") && !birdInfo.getBirdImage().equals("")
                 && !birdInfo.getBirdSpecies().equals("") && !birdInfo.getBirdStatus().equals("")) {
-            if(birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCaseOrAffiliation_IdAndBirdCodeContainingIgnoreCase(
+            if(birdService.getSearchByBirdNameBirdCode(
                     affiliation, birdInfo.getBirdName(), affiliation, birdInfo.getBirdCode()) == null){
                 if(user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
                     birdInfo.setParingBirdId(null);
                 }
 
-                Optional<Farm> farm =  farmRepository.findById(affiliation);
+                Optional<Farm> farm =  farmService.findById(affiliation);
                 Farm farmEntity = farm.get();
                 birdInfo.setAffiliation(farmEntity);
                 farmEntity.getHaveBirds().add(birdInfo);
@@ -136,30 +128,44 @@ public class BirdController {
     public ResponseEntity<?> viewBirdDetail(@PathVariable Long id){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName());
+        User user = userService.findByUsername(auth.getName());
 
-        Optional<Bird> bird =  birdRepository.findById(id);
+        Optional<Bird> bird =  birdService.findById(id);
 
-        if(bird.isPresent()){
-            Bird birdEntity = bird.get();
-            if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
-                Long affiliation = user.getAffiliation().getId();
-
-                if(birdEntity.getAffiliation().getId().equals(affiliation)){
-                    return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(birdEntity));
+        AtomicReference<ResponseEntity<BirdDTO>> output = null;
+        bird.ifPresentOrElse(b -> {
+            Long affiliation = user.getAffiliation().getId();
+                if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)
+                        && b.getAffiliation().getId().equals(affiliation)){
+                    output.set(ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(b)));
                 }else{
-//                    return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
-
-                }
-            }else{
-                return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(birdEntity));
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
             }
+        },() ->{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
+        });
+        return output.get();
 
-        }else{
-//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
-        }
+//        if(bird.isPresent()){
+//            Bird birdEntity = bird.get();
+//            if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+//                Long affiliation = user.getAffiliation().getId();
+//
+//                if(birdEntity.getAffiliation().getId().equals(affiliation)){
+//                    return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(birdEntity));
+//                }else{
+////                    return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
+//
+//                }
+//            }else{
+//                return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(birdEntity));
+//            }
+//
+//        }else{
+////            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given %n is not found.",id));
+//        }
     }
 
     @PostMapping("/updateBirdDetail/{id}")
@@ -168,7 +174,7 @@ public class BirdController {
 
         Bird target = birdService.getBird(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName());
+        User user = userService.findByUsername(auth.getName());
 
         if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
             affiliation = user.getAffiliation().getId();
@@ -180,10 +186,10 @@ public class BirdController {
                 && !birdInfo.getBirdSpecies().equals("") && !birdInfo.getBirdStatus().equals("")) {
 
 
-            if((birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCase(affiliation, birdInfo.getBirdName())== null ||
-                    birdRepository.findByAffiliation_IdAndBirdNameContainingIgnoreCase(affiliation, birdInfo.getBirdName()).getId().equals(target.getId()))&&
-               (birdRepository.findByAffiliation_IdAndBirdCodeContainingIgnoreCase(affiliation, birdInfo.getBirdCode())== null ||
-                    birdRepository.findByAffiliation_IdAndBirdCodeContainingIgnoreCase(affiliation, birdInfo.getBirdCode()).getId().equals(target.getId()))){
+            if((birdService.getSearchByBirdName(affiliation, birdInfo.getBirdName())== null || // new name not duplicate other birds in db
+                    birdService.getSearchByBirdName(affiliation, birdInfo.getBirdName()).getId().equals(target.getId()))&&
+               (birdService.getSearchByBirdCode(affiliation, birdInfo.getBirdCode())== null || // new code not duplicate other birds in db
+                       birdService.getSearchByBirdCode(affiliation, birdInfo.getBirdCode()).getId().equals(target.getId()))){
                 target.setBirdName(birdInfo.getBirdName());
                 target.setBirdCode(birdInfo.getBirdCode());
                 target.setDateOfBirth(birdInfo.getDateOfBirth());
@@ -218,7 +224,7 @@ public class BirdController {
 
         Bird target = birdService.getBird(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName());
+        User user = userService.findByUsername(auth.getName());
         Long affiliation = null;
 
         if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
@@ -236,7 +242,7 @@ public class BirdController {
 //                    birdService.deleteBirdById(output.getId());
                     return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
                 }else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
                 }
             }else {
                 target.setBirdStatus("Unavailable");
@@ -248,7 +254,7 @@ public class BirdController {
                 return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(output));
             }
         }else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
         }
     }
 }
