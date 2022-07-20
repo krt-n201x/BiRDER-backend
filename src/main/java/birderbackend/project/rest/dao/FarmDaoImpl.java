@@ -15,6 +15,11 @@ public class FarmDaoImpl implements FarmDao{
     FarmRepository farmRepository;
 
     @Override
+    public Farm save(Farm farm) {
+        return farmRepository.save(farm);
+    }
+
+    @Override
     public Page<Farm> getFarm(Pageable pageRequest) {
         return farmRepository.findAll(pageRequest);
     }

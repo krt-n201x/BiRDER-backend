@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface FarmDao {
+    Farm save(Farm farm);
+
     Page<Farm> getFarm(Pageable pageRequest);
 
     Optional<Farm> findById(Long id);

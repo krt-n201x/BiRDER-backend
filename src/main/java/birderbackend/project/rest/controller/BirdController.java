@@ -132,7 +132,7 @@ public class BirdController {
 
         Optional<Bird> bird =  birdService.findById(id);
 
-        AtomicReference<ResponseEntity<BirdDTO>> output = null;
+        AtomicReference<ResponseEntity<BirdDTO>> output = new AtomicReference<>();
         bird.ifPresentOrElse(b -> {
             Long affiliation = user.getAffiliation().getId();
                 if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)
@@ -197,6 +197,7 @@ public class BirdController {
                 target.setCageNumber(birdInfo.getCageNumber());
                 target.setSexOfBird(birdInfo.getSexOfBird());
                 target.setBirdImage(birdInfo.getBirdImage());
+                target.setBirdTreatmentRecord(birdInfo.getBirdTreatmentRecord());
                 target.setBirdSpecies(birdInfo.getBirdSpecies());
                 target.setBirdStatus(birdInfo.getBirdStatus());
                 target.setMaleParentId(birdInfo.getMaleParentId());
