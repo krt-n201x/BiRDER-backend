@@ -1,11 +1,9 @@
 package birderbackend.project.rest.controller;
 
 import birderbackend.project.rest.entity.Farm;
-import birderbackend.project.rest.repository.FarmRepository;
 import birderbackend.project.rest.security.JwtTokenUtil;
 import birderbackend.project.rest.security.entity.AuthorityName;
 import birderbackend.project.rest.security.entity.User;
-import birderbackend.project.rest.security.repository.UserRepository;
 import birderbackend.project.rest.service.FarmService;
 import birderbackend.project.rest.service.UserService;
 import birderbackend.project.rest.util.LabMapper;
@@ -33,32 +31,29 @@ public class UserController {
     private String tokenHeader;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-    @Autowired
-    UserService userService;
-    @Autowired
-    UserRepository userRepository;
 
     @Autowired
-    FarmRepository farmRepository;
+    UserService userService;
 
     @Autowired
     FarmService farmService;
 
     @PostMapping("/registers")
     public ResponseEntity<?> addUser(@RequestBody User user) {
-        if (userRepository.findByUsername(user.getUsername()) == null && !user.getUsername().equals("")
+        if (userService.findByUsername(user.getUsername()) == null && !user.getUsername().equals("")
                 && !user.getPassword().equals("") && !user.getEmail().equals("") && !user.getAddress().equals("")
                 && !user.getPhoneNumber().equals("") && !user.getFullName().equals("")) {
             User output = userService.save(user);
             return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(output));
         }else {
-            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not register, some data might not correct.");
         }
     }
 
     @PostMapping("/registers_farm_employee")
     public ResponseEntity<?> addFarmEmployee(HttpServletRequest request, @RequestBody User farmEmployee) {
-        if (userRepository.findByUsername(farmEmployee.getUsername()) == null && !farmEmployee.getUsername().equals("")
+        if (userService.findByUsername(farmEmployee.getUsername()) == null && !farmEmployee.getUsername().equals("")
                 && !farmEmployee.getPassword().equals("") && !farmEmployee.getEmail().equals("") && !farmEmployee.getAddress().equals("")
                 && !farmEmployee.getPhoneNumber().equals("") && !farmEmployee.getFullName().equals("")) {
             String authToken = request.getHeader(this.tokenHeader);
@@ -66,7 +61,7 @@ public class UserController {
                 authToken = authToken.substring(7);
             }
             String username = jwtTokenUtil.getUsernameFromToken(authToken);
-            User farmOwner = userRepository.findByUsername(username);
+            User farmOwner = userService.findByUsername(username);
             Farm affiliation = farmOwner.getAffiliation();
 //            System.out.println(affiliation.getId());
             farmEmployee.setAffiliation(affiliation);
@@ -75,14 +70,15 @@ public class UserController {
             return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(output));
 //            return null;
         }else {
-            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not register, some data might not correct.");
         }
     }
 
     @GetMapping("/viewProfileDetail/{id}")
     public ResponseEntity<?> viewProfileDetail(@PathVariable("id") Long id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName());
+        User user = userService.findByUsername(auth.getName());
         User target = userService.getUser(id);
 
         if (user != null && target != null) {
@@ -91,7 +87,7 @@ public class UserController {
                     return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
                 }
                 else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
                 }
             }
             else if (user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_OWNER)) {
@@ -105,22 +101,22 @@ public class UserController {
                         return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
                     }
                     else {
-                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
                     }
                 }
                 else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
                 }
             }
             else if(user.equals(target)){
                 return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
             }
             else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
             }
         }
         else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
         }
     }
 
@@ -129,7 +125,7 @@ public class UserController {
     public ResponseEntity<?> updateProfileDetail(@PathVariable("id") Long id, @RequestBody User userInfo
             , @RequestParam("newPassword") String newPassword, @RequestParam("confirmPassword") String confirmPassword) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName());
+        User user = userService.findByUsername(auth.getName());
         User target = userService.getUser(id);
 
         boolean editAdmin = false;
@@ -140,7 +136,7 @@ public class UserController {
                     editAdmin = true;
                 }
                 else if (target.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN) && !user.equals(target)) {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
                 }
                 else {
                     editAdmin = false;
@@ -157,22 +153,22 @@ public class UserController {
                         editAdmin = false;
                     }
                     else {
-                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
                     }
                 }
                 else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
                 }
             }
 //            else if(user.equals(target)){
 //                editAdmin = false;
 //            }
             else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
             }
         }
         else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
         }
 
         if(editAdmin){
@@ -196,18 +192,18 @@ public class UserController {
                 if (!newPassword.equals("") && !confirmPassword.equals("") && newPassword.equals(confirmPassword)) {
                     PasswordEncoder encoder = new BCryptPasswordEncoder();
                     target.setPassword(encoder.encode(newPassword));
-                    userRepository.save(target);
+                    userService.save(target);
                     return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
                 }
                 else { // Wrong Password
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Password not correct");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Password not correct.");
                 }
 
             } else { // Wrong Password
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Password not correct");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Password not correct.");
             }
         }else{
-            userRepository.save(target);
+            userService.save(target);
             return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
         }
     }
@@ -215,7 +211,7 @@ public class UserController {
     @GetMapping("/viewFarmList")
     public ResponseEntity<?> getFarmList(@RequestParam(value = "_limit", required = false) Integer perPage
             , @RequestParam(value = "_page", required = false) Integer page) {
-        perPage = perPage == null ? 3 : perPage;
+        perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
         Page<User> pageOutput;
         pageOutput = userService.getFarmOwner(AuthorityName.ROLE_OWNER, PageRequest.of(page - 1, perPage));
@@ -229,9 +225,9 @@ public class UserController {
             , @RequestParam(value = "_page", required = false) Integer page, @RequestParam(value = "affiliation", required = false) Long affiliation){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName());
+        User user = userService.findByUsername(auth.getName());
 
-        perPage = perPage == null ? 3 : perPage;
+        perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
         Page<User> pageOutput;
 
@@ -256,7 +252,7 @@ public class UserController {
             , @RequestParam(value = "fullName", required = false) String fullName
             , @RequestParam(value = "username", required = false) String username) {
 
-        perPage = perPage == null ? 3 : perPage;
+        perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
         Page<User> pageOutput;
 //        if (fullName == null) {
@@ -278,9 +274,9 @@ public class UserController {
             , @RequestParam(value = "affiliation", required = false) Long affiliation) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName());
+        User user = userService.findByUsername(auth.getName());
 
-        perPage = perPage == null ? 3 : perPage;
+        perPage = perPage == null ? 6 : perPage;
         page = page == null ? 1 : page;
         Page<User> pageOutput;
 
@@ -296,10 +292,10 @@ public class UserController {
 
     }
 
-    @DeleteMapping("/deleteAccount/{id}")
+    @PostMapping("/deleteAccount/{id}")
     public ResponseEntity<?> deleteAccount(@PathVariable("id") Long id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName());
+        User user = userService.findByUsername(auth.getName());
         User target = userService.getUser(id);
 
         if (user != null && target != null) {
@@ -315,7 +311,7 @@ public class UserController {
                     userService.deleteUserById(id);
                     return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
                 }else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
                 }
             }
             else if (user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_OWNER)) {
@@ -332,19 +328,19 @@ public class UserController {
                         return ResponseEntity.ok(LabMapper.INSTANCE.getUserDTO(target));
                     }
                     else {
-                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
                     }
                 }
                 else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
                 }
             }
             else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
             }
         }
         else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
         }
     }
 }

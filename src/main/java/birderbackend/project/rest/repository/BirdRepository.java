@@ -12,5 +12,9 @@ public interface BirdRepository extends JpaRepository<Bird,Long> {
 
     Bird findByAffiliation_IdAndBirdNameContainingIgnoreCaseOrAffiliation_IdAndBirdCodeContainingIgnoreCase(Long affiliation, String birdName, Long affiliation2, String birdCode);
 
-    Long deleteBirdById(Long id);
+//    Long deleteBirdById(Long id);
+
+    Bird findByAffiliation_IdAndBirdNameContainingIgnoreCase(Long affiliation, String birdName);
+    Bird findByAffiliation_IdAndBirdCodeContainingIgnoreCase(Long affiliation, String birdCode);
+
 }

@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class BirdServiceImpl implements BirdService{
@@ -44,9 +45,30 @@ public class BirdServiceImpl implements BirdService{
         return birdDao.getBird(id);
     }
 
-    @Transactional
-    public Long deleteBirdById(Long id) {
-        return birdDao.deleteBirdById(id);
+    @Override
+    public Optional<Bird> findById(Long id) {
+        return birdDao.findById(id);
     }
+
+    @Override
+    public Bird getSearchByBirdNameBirdCode(Long affiliation, String birdName, Long affiliation2, String birdCode) {
+        return birdDao.getSearchByBirdNameBirdCode(affiliation, birdName, affiliation2, birdCode);
+    }
+
+    @Override
+    public Bird getSearchByBirdName(Long affiliation, String birdName) {
+        return birdDao.getSearchByBirdName(affiliation, birdName);
+    }
+
+    @Override
+    public Bird getSearchByBirdCode(Long affiliation, String birdCode) {
+        return birdDao.getSearchByBirdCode(affiliation, birdCode);
+    }
+
+
+//    @Transactional
+//    public Long deleteBirdById(Long id) {
+//        return birdDao.deleteBirdById(id);
+//    }
 
 }

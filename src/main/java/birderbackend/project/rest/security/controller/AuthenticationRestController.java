@@ -1,6 +1,7 @@
 package birderbackend.project.rest.security.controller;
 
 
+import birderbackend.project.rest.service.UserService;
 import birderbackend.project.rest.util.LabMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +42,7 @@ public class AuthenticationRestController {
     private UserDetailsService userDetailsService;
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @PostMapping("${jwt.route.authentication.path}")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest, Device device) throws AuthenticationException {
@@ -60,7 +61,7 @@ public class AuthenticationRestController {
         final String token = jwtTokenUtil.generateToken(userDetails, device);
         Map result = new HashMap();
         result.put("token", token);
-        User user = userRepository.findById(((JwtUser) userDetails).getId()).orElse(null);
+        User user = userService.findById(((JwtUser) userDetails).getId());
 //        if (user.getAffiliation() != null) {
         result.put("user", LabMapper.INSTANCE.getUserAuthDTO(user));
 //        }

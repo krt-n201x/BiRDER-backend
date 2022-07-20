@@ -31,8 +31,8 @@ public class UserServiceImpl implements UserService{
     UserDao userDao;
     @Autowired
     FarmDao farmDao;
-    @Autowired
-    FarmRepository farmRepository;
+//    @Autowired
+//    FarmRepository farmRepository;
 
     @Override
     @Transactional
@@ -43,10 +43,10 @@ public class UserServiceImpl implements UserService{
         user.setLastPasswordResetDate(Date.from(LocalDate.of(2021, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant()));
         Authority authority = authorityRepository.findByName(AuthorityName.ROLE_OWNER);
         user.getAuthorities().add(authority);
-        Farm farm = farmRepository.save(Farm.builder().build());
+        Farm farm = farmDao.save(Farm.builder().build());
         farm.getHaveUsers().add(user);
         user.setAffiliation(farm);
-        farmRepository.save(farm);
+//        farmRepository.save(farm);
 
         return userDao.save(user);
     }
@@ -99,5 +99,15 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public Long deleteUserById(Long id) {
         return userDao.deleteUserById(id);
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        return userDao.findByUsername(username);
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userDao.findById(id);
     }
 }

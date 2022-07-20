@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     User save(User user);
@@ -26,4 +27,7 @@ public interface UserService {
 
     Long deleteUserById(Long id);
 
+    User findByUsername(String username);
+
+    User findById(Long id);
 }
