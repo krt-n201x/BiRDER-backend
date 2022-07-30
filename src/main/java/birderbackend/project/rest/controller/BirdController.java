@@ -134,12 +134,17 @@ public class BirdController {
 
         AtomicReference<ResponseEntity<BirdDTO>> output = new AtomicReference<>();
         bird.ifPresentOrElse(b -> {
-            Long affiliation = user.getAffiliation().getId();
+            if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+                Long affiliation = user.getAffiliation().getId();
                 if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)
                         && b.getAffiliation().getId().equals(affiliation)){
                     output.set(ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(b)));
                 }else{
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
+                }
+            }
+            else {
+                output.set(ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(b)));
             }
         },() ->{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
