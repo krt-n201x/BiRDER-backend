@@ -99,7 +99,7 @@ public class BirdController {
         if (       !birdInfo.getBirdName().equals("")
                 && !birdInfo.getBirdCode().equals("") && !birdInfo.getDateOfBirth().equals("") && !birdInfo.getBirdColor().equals("")
                 && !birdInfo.getCageNumber().equals("") && !birdInfo.getSexOfBird().equals("") && !birdInfo.getBirdImage().equals("")
-                && !birdInfo.getBirdSpecies().equals("") && !birdInfo.getBirdStatus().equals("")) {
+                && birdInfo.getBirdSpeciesId()!=null && !birdInfo.getBirdStatus().equals("")) {
             if(birdService.getSearchByBirdNameBirdCode(
                     affiliation, birdInfo.getBirdName(), affiliation, birdInfo.getBirdCode()) == null){
                 if(user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
@@ -188,7 +188,7 @@ public class BirdController {
         if (       !birdInfo.getBirdName().equals("")
                 && !birdInfo.getBirdCode().equals("") && !birdInfo.getDateOfBirth().equals("") && !birdInfo.getBirdColor().equals("")
                 && !birdInfo.getCageNumber().equals("") && !birdInfo.getSexOfBird().equals("") && !birdInfo.getBirdImage().equals("")
-                && !birdInfo.getBirdSpecies().equals("") && !birdInfo.getBirdStatus().equals("")) {
+                && birdInfo.getBirdSpeciesId()!=null && !birdInfo.getBirdStatus().equals("")) {
 
 
             if((birdService.getSearchByBirdName(affiliation, birdInfo.getBirdName())== null || // new name not duplicate other birds in db
@@ -203,7 +203,7 @@ public class BirdController {
                 target.setSexOfBird(birdInfo.getSexOfBird());
                 target.setBirdImage(birdInfo.getBirdImage());
                 target.setBirdTreatmentRecord(birdInfo.getBirdTreatmentRecord());
-                target.setBirdSpecies(birdInfo.getBirdSpecies());
+                target.setBirdSpeciesId(birdInfo.getBirdSpeciesId());
                 target.setBirdStatus(birdInfo.getBirdStatus());
                 target.setMaleParentId(birdInfo.getMaleParentId());
                 target.setFemaleParentId(birdInfo.getFemaleParentId());
