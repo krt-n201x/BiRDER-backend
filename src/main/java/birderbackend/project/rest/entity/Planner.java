@@ -18,7 +18,7 @@ public class Planner {
     @EqualsAndHashCode.Exclude
     Long id;
 
-    @Column(name = "TITLE", length = 25)
+    @Column(name = "TITLE", length = 50)
     @NotNull
     private String title;
 

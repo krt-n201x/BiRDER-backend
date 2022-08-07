@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -63,6 +64,16 @@ public class BirdServiceImpl implements BirdService{
     @Override
     public Bird getSearchByBirdCode(Long affiliation, String birdCode) {
         return birdDao.getSearchByBirdCode(affiliation, birdCode);
+    }
+
+    @Override
+    public List<Bird> getMaleOrFemaleBirdList(String sexOfBird, Long id) {
+        return birdDao.getMaleOrFemaleBirdList(sexOfBird, id);
+    }
+
+    @Override
+    public List<Bird> getMaleOrFemaleBirdListNoSelf(String sexOfBird, Long affiliation, Long birdId) {
+        return birdDao.getMaleOrFemaleBirdListNoSelf(sexOfBird, affiliation, birdId);
     }
 
 

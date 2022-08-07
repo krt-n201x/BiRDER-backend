@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -54,6 +55,16 @@ public class BirdDaoImpl implements BirdDao{
     @Override
     public Bird getSearchByBirdCode(Long affiliation, String birdCode) {
         return birdRepository.findByAffiliation_IdAndBirdCodeContainingIgnoreCase(affiliation, birdCode);
+    }
+
+    @Override
+    public List<Bird> getMaleOrFemaleBirdList(String sexOfBird, Long id) {
+        return birdRepository.findBySexOfBirdAndAffiliation_Id(sexOfBird, id);
+    }
+
+    @Override
+    public List<Bird> getMaleOrFemaleBirdListNoSelf(String sexOfBird, Long affiliation, Long birdId) {
+        return birdRepository.findBySexOfBirdAndAffiliation_IdAndIdNot(sexOfBird, affiliation, birdId);
     }
 
 //    public Long deleteBirdById(Long id) {return birdRepository.deleteBirdById(id);}

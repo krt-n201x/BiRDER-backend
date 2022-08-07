@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -263,4 +264,28 @@ public class BirdController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
         }
     }
+
+    @GetMapping("/getMaleOrFemaleBirdList/{id}")
+    public ResponseEntity<?> getMaleOrFemaleBirdList(@PathVariable Long id, Long affiliation, String sex){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+        Optional<Bird> bird =  birdService.findById(id);
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        List<Bird> pageOutput;
+        if(bird.isPresent()){
+            Bird birdEntity = bird.get();
+            Long birdId = birdEntity.getId();
+            pageOutput = birdService.getMaleOrFemaleBirdListNoSelf(sex, affiliation, birdId);
+
+        }else {
+            pageOutput = birdService.getMaleOrFemaleBirdList(sex, affiliation);
+        }
+        return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(pageOutput));
+    }
+
 }

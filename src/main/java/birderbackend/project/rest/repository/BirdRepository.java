@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface BirdRepository extends JpaRepository<Bird,Long> {
     Page<Bird> findByAffiliation_Id(Long affiliation, Pageable pageRequest);
 
@@ -16,5 +18,9 @@ public interface BirdRepository extends JpaRepository<Bird,Long> {
 
     Bird findByAffiliation_IdAndBirdNameContainingIgnoreCase(Long affiliation, String birdName);
     Bird findByAffiliation_IdAndBirdCodeContainingIgnoreCase(Long affiliation, String birdCode);
+
+    List<Bird> findBySexOfBirdAndAffiliation_Id(String sexOfBird, Long id);
+
+    List<Bird> findBySexOfBirdAndAffiliation_IdAndIdNot(String sexOfBird, Long affiliation, Long birdId);
 
 }

@@ -4,6 +4,7 @@ import birderbackend.project.rest.entity.Bird;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BirdDao {
@@ -24,5 +25,8 @@ public interface BirdDao {
     Bird getSearchByBirdName(Long affiliation, String birdName);
 
     Bird getSearchByBirdCode(Long affiliation, String birdCode);
+
+    List<Bird> getMaleOrFemaleBirdList(String sexOfBird, Long id);
+    List<Bird> getMaleOrFemaleBirdListNoSelf(String sexOfBird, Long affiliation, Long birdId);
 
 }
