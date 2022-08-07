@@ -278,9 +278,7 @@ public class BirdController {
 
         List<Bird> pageOutput;
         if(bird.isPresent()){
-            Bird birdEntity = bird.get();
-            Long birdId = birdEntity.getId();
-            pageOutput = birdService.getMaleOrFemaleBirdListNoSelf(sex, affiliation, birdId);
+            pageOutput = birdService.getMaleOrFemaleBirdListNoSelf(sex, affiliation, id);
 
         }else {
             pageOutput = birdService.getMaleOrFemaleBirdList(sex, affiliation);

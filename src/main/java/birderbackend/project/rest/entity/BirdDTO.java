@@ -22,7 +22,7 @@ public class BirdDTO {
     String sexOfBird;
     String birdImage;
     String birdTreatmentRecord;
-    String birdSpecies;
+    BirdSpeciesDTO birdSpeciesId;
     String birdStatus;
     BirdDetailDTO maleParentId;
     BirdDetailDTO femaleParentId;
