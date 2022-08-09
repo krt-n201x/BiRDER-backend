@@ -1,7 +1,6 @@
 package birderbackend.project.rest.controller;
 
-import birderbackend.project.rest.entity.Bird;
-import birderbackend.project.rest.entity.BirdBreeding;
+import birderbackend.project.rest.entity.*;
 import birderbackend.project.rest.security.entity.AuthorityName;
 import birderbackend.project.rest.security.entity.User;
 import birderbackend.project.rest.service.BirdBreedingService;
@@ -12,14 +11,17 @@ import birderbackend.project.rest.util.LabMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 public class BirdBreedingController {
@@ -52,4 +54,100 @@ public class BirdBreedingController {
         responseHeader.set("x-total-count", String.valueOf(pageOutput.getTotalElements()));
         return new ResponseEntity<>(LabMapper.INSTANCE.getBirdBreedingDTO(pageOutput.getContent()), responseHeader, HttpStatus.OK);
     }
+
+    @GetMapping("/searchBirdBreedingList")
+    public ResponseEntity<?> getSearchBirdBreedingList(@RequestParam(value = "_limit", required = false) Integer perPage
+            , @RequestParam(value = "_page", required = false) Integer page
+            , @RequestParam(value = "breedingCageNumber", required = false) String breedingCageNumber
+            , @RequestParam(value = "maleCode", required = false) Long haveMale_id
+            , @RequestParam(value = "femaleCode", required = false) Long haveFemale_id
+            , @RequestParam(value = "breedingStatus", required = false) String breedingStatus
+            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        perPage = perPage == null ? 6 : perPage;
+        page = page == null ? 1 : page;
+        Page<BirdBreeding> pageOutput;
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        pageOutput = birdBreedingService.getSearchBirdBreedingList(affiliation, breedingCageNumber, affiliation, haveMale_id, affiliation, haveFemale_id, affiliation, breedingStatus, PageRequest.of(page - 1, perPage));
+
+        HttpHeaders responseHeader = new HttpHeaders();
+        responseHeader.set("x-total-count", String.valueOf(pageOutput.getTotalElements()));
+        System.out.println(pageOutput);
+        return new ResponseEntity<>(LabMapper.INSTANCE.getBirdBreedingDTO(pageOutput.getContent()), responseHeader, HttpStatus.OK);
+
+    }
+
+//    @PostMapping("/createBirdBreedingDetail")
+//    public ResponseEntity<?> createBirdBreedingDetail(@RequestBody BirdBreeding birdBreedingInfo
+//            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
+//
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        User user = userService.findByUsername(auth.getName());
+//
+//        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+//            affiliation = user.getAffiliation().getId();
+//        }
+//
+//        if (       !birdBreedingInfo.getBreedingCageNumber().equals("") && !birdBreedingInfo.getBreedingClutch().equals("")
+//                && birdBreedingInfo.getBreedingDate()!=null && !birdBreedingInfo.getBreedingStatus().equals("")
+//                && birdBreedingInfo.getHaveMale()!=null && birdBreedingInfo.getHaveFemale()!=null) {
+//            if(birdBreedingService.getSearchByMaleFemaleCode(
+//                    affiliation, birdBreedingInfo.getHaveMale(), affiliation, birdBreedingInfo.getHaveFemale()) == null){
+////                if(user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
+////                    birdBreedingInfo.setParingBirdId(null);
+////                }
+//
+//                Optional<Farm> farm =  farmService.findById(affiliation);
+//                Farm farmEntity = farm.get();
+//                birdBreedingInfo.setAffiliation(farmEntity);
+//                farmEntity.getHaveBreedings().add(birdBreedingInfo);
+//
+//                BirdBreeding output = birdBreedingService.saveBirdBreedingInfo(birdBreedingInfo);
+//                return ResponseEntity.ok(LabMapper.INSTANCE.getBirdBreedingDTO(output));
+//            }else {
+////            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird breeding, some data might not correct.");
+//            }
+//
+//        }else {
+////            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+//            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird breeding, some data might not correct.");
+//        }
+//    }
+
+    @GetMapping("/viewBirdBreedingDetail/{id}")
+    public ResponseEntity<?> viewBirdBreedingDetail(@PathVariable Long id) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        Optional<BirdBreeding> birdBreeding = birdBreedingService.findById(id);
+
+        AtomicReference<ResponseEntity<BirdBreedingDTO>> output = new AtomicReference<>();
+        birdBreeding.ifPresentOrElse(bb -> {
+            if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+                Long affiliation = user.getAffiliation().getId();
+                if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)
+                        && bb.getAffiliation().getId().equals(affiliation)) {
+                    output.set(ResponseEntity.ok(LabMapper.INSTANCE.getBirdBreedingDTO(bb)));
+                } else {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.", id));
+                }
+            } else {
+                output.set(ResponseEntity.ok(LabMapper.INSTANCE.getBirdBreedingDTO(bb)));
+            }
+        }, () -> {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.", id));
+        });
+        return output.get();
+    }
+
+
 }
