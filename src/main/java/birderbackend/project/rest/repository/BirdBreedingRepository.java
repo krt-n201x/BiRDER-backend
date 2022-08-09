@@ -14,4 +14,6 @@ public interface BirdBreedingRepository extends JpaRepository<BirdBreeding,Long>
     BirdBreeding findByAffiliation_IdAndHaveMale_IdOrAffiliation_IdAndHaveFemale_Id(Long affiliation, Long haveMale_id, Long affiliation2, Long haveFemale_id);
 
 //    BirdBreeding findByAffiliation_IdAndHaveMale
+
+    Long deleteBirdBreedingById(Long id);
 }

@@ -3,10 +3,7 @@ package birderbackend.project.rest.controller;
 import birderbackend.project.rest.entity.*;
 import birderbackend.project.rest.security.entity.AuthorityName;
 import birderbackend.project.rest.security.entity.User;
-import birderbackend.project.rest.service.BirdBreedingService;
-import birderbackend.project.rest.service.BirdService;
-import birderbackend.project.rest.service.FarmService;
-import birderbackend.project.rest.service.UserService;
+import birderbackend.project.rest.service.*;
 import birderbackend.project.rest.util.LabMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -33,6 +31,9 @@ public class BirdBreedingController {
 
     @Autowired
     FarmService farmService;
+
+    @Autowired
+    EggService eggService;
 
     @GetMapping("/viewBirdBreedingList")
     public ResponseEntity<?> viewBirdBreedingList(@RequestParam(value = "_limit", required = false) Integer perPage
@@ -149,5 +150,36 @@ public class BirdBreedingController {
         return output.get();
     }
 
+    @PostMapping("/deleteBirdBreeding/{id}")
+    public ResponseEntity<?> deleteBirdBreeding(@PathVariable("id") Long id) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+//        User target = userService.getUser(id);
+        Optional<BirdBreeding> target = birdBreedingService.findById(id);
+
+        if (user != null && target.isPresent()) {
+            if (user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+                birdBreedingService.deleteBirdBreedingById(id);
+                return ResponseEntity.ok(LabMapper.INSTANCE.getBirdBreedingDTO(target.get()));
+            }
+            else if (user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_OWNER)) {
+                Long affiliation = user.getAffiliation().getId();
+                if(Objects.equals(affiliation, target.get().getAffiliation().getId())){
+                    birdBreedingService.deleteBirdBreedingById(id);
+                    return ResponseEntity.ok(LabMapper.INSTANCE.getBirdBreedingDTO(target.get()));
+                }
+                else {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
+                }
+            }
+            else {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
+            }
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
+        }
+    }
 
 }

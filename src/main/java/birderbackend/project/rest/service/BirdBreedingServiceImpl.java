@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -16,8 +17,8 @@ public class BirdBreedingServiceImpl implements BirdBreedingService{
     BirdBreedingDao birdBreedingDao;
 
     @Override
-    public Optional<BirdBreeding> findById(Long affiliation) {
-        return birdBreedingDao.findById(affiliation);
+    public Optional<BirdBreeding> findById(Long id) {
+        return birdBreedingDao.findById(id);
     }
 
     @Override
@@ -38,5 +39,10 @@ public class BirdBreedingServiceImpl implements BirdBreedingService{
     @Override
     public BirdBreeding getSearchByMaleFemaleCode(Long affiliation, Long haveMale_id, Long affiliation2, Long haveFemale_id) {
         return birdBreedingDao.getSearchByMaleFemaleCode(affiliation, haveMale_id, affiliation2, haveFemale_id);
+    }
+
+    @Transactional
+    public Long deleteBirdBreedingById(Long id) {
+        return birdBreedingDao.deleteBirdBreedingById(id);
     }
 }

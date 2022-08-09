@@ -17,8 +17,8 @@ public class BirdBreedingDaoImpl implements BirdBreedingDao {
     BirdBreedingRepository birdBreedingRepository;
 
     @Override
-    public Optional<BirdBreeding> findById(Long affiliation) {
-        return birdBreedingRepository.findById(affiliation);
+    public Optional<BirdBreeding> findById(Long id) {
+        return birdBreedingRepository.findById(id);
     }
 
     @Override
@@ -39,5 +39,10 @@ public class BirdBreedingDaoImpl implements BirdBreedingDao {
     @Override
     public BirdBreeding getSearchByMaleFemaleCode(Long affiliation, Long haveMale_id, Long affiliation2, Long haveFemale_id) {
         return birdBreedingRepository.findByAffiliation_IdAndHaveMale_IdOrAffiliation_IdAndHaveFemale_Id(affiliation, haveMale_id, affiliation2, haveFemale_id);
+    }
+
+    @Override
+    public Long deleteBirdBreedingById(Long id) {
+        return birdBreedingRepository.deleteBirdBreedingById(id);
     }
 }

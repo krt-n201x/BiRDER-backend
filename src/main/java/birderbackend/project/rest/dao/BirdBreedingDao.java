@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface BirdBreedingDao {
-    Optional<BirdBreeding> findById(Long affiliation);
+    Optional<BirdBreeding> findById(Long id);
 
     Page<BirdBreeding> getBirdBreeding(Long affiliation, Pageable pageRequest);
 
@@ -17,5 +17,7 @@ public interface BirdBreedingDao {
     BirdBreeding saveBirdBreedingInfo(BirdBreeding birdBreedingInfo);
 
     BirdBreeding getSearchByMaleFemaleCode(Long affiliation, Long haveMale_id, Long affiliation2, Long haveFemale_id);
+
+    Long deleteBirdBreedingById(Long id);
 
 }
