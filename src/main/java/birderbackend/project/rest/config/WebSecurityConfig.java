@@ -86,6 +86,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/createBirdBreedingDetail").hasAnyRole("ADMIN", "OWNER")
                 .antMatchers(HttpMethod.GET,"/viewBirdBreedingDetail/{id}").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
                 .antMatchers(HttpMethod.POST,"/deleteBirdBreeding/{id}").hasAnyRole("ADMIN", "OWNER")
+                .antMatchers(HttpMethod.POST,"/createBirdBreedingDetail").hasAnyRole("ADMIN", "OWNER")
+
 
 //                .antMatchers(HttpMethod.GET,"/events").permitAll()
 //                .antMatchers(HttpMethod.GET,"/organizers").permitAll()

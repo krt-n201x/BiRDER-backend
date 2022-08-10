@@ -17,6 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -34,6 +36,9 @@ public class BirdBreedingController {
 
     @Autowired
     EggService eggService;
+
+    @Autowired
+    BirdService birdService;
 
     @GetMapping("/viewBirdBreedingList")
     public ResponseEntity<?> viewBirdBreedingList(@RequestParam(value = "_limit", required = false) Integer perPage
@@ -85,43 +90,68 @@ public class BirdBreedingController {
 
     }
 
-//    @PostMapping("/createBirdBreedingDetail")
-//    public ResponseEntity<?> createBirdBreedingDetail(@RequestBody BirdBreeding birdBreedingInfo
-//            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
-//
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        User user = userService.findByUsername(auth.getName());
-//
-//        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
-//            affiliation = user.getAffiliation().getId();
-//        }
-//
-//        if (       !birdBreedingInfo.getBreedingCageNumber().equals("") && !birdBreedingInfo.getBreedingClutch().equals("")
-//                && birdBreedingInfo.getBreedingDate()!=null && !birdBreedingInfo.getBreedingStatus().equals("")
-//                && birdBreedingInfo.getHaveMale()!=null && birdBreedingInfo.getHaveFemale()!=null) {
-//            if(birdBreedingService.getSearchByMaleFemaleCode(
-//                    affiliation, birdBreedingInfo.getHaveMale(), affiliation, birdBreedingInfo.getHaveFemale()) == null){
-////                if(user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
-////                    birdBreedingInfo.setParingBirdId(null);
-////                }
-//
-//                Optional<Farm> farm =  farmService.findById(affiliation);
-//                Farm farmEntity = farm.get();
-//                birdBreedingInfo.setAffiliation(farmEntity);
-//                farmEntity.getHaveBreedings().add(birdBreedingInfo);
-//
-//                BirdBreeding output = birdBreedingService.saveBirdBreedingInfo(birdBreedingInfo);
-//                return ResponseEntity.ok(LabMapper.INSTANCE.getBirdBreedingDTO(output));
-//            }else {
-////            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
-//                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird breeding, some data might not correct.");
-//            }
-//
-//        }else {
-////            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
-//            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird breeding, some data might not correct.");
-//        }
-//    }
+    @PostMapping("/createBirdBreedingDetail")
+    public ResponseEntity<?> createBirdBreedingDetail(@RequestBody BirdBreeding birdBreedingInfo
+            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        if (       !birdBreedingInfo.getBreedingCageNumber().equals("") && !birdBreedingInfo.getBreedingClutch().equals("")
+                && birdBreedingInfo.getBreedingDate()!=null && !birdBreedingInfo.getBreedingStatus().equals("")
+                && birdBreedingInfo.getHaveMale()!=null && birdBreedingInfo.getHaveFemale()!=null) {
+
+            Optional<Bird> maleBird = birdService.findById(birdBreedingInfo.getHaveMale().getId());
+            Optional<Bird> femaleBird = birdService.findById(birdBreedingInfo.getHaveFemale().getId());
+
+            if( maleBird.isPresent() && femaleBird.isPresent()
+                && maleBird.get().getAffiliation().getId().equals(affiliation)
+                && femaleBird.get().getAffiliation().getId().equals(affiliation)
+                && !maleBird.get().getSexOfBird().equals(femaleBird.get().getSexOfBird())
+                && maleBird.get().getBirdStatus().equals("Available") && femaleBird.get().getBirdStatus().equals("Available")){
+
+                if(birdBreedingInfo.getHaveEggs()!=null){
+                    List<Egg> eggs = birdBreedingInfo.getHaveEggs();
+                    for(int i=0; i<eggs.size(); i++){
+                        if( eggs.get(i).getLayDate() == null || eggs.get(i).getEggType().equals("")
+                            || eggs.get(i).getEggStatus().equals("")){
+                            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird breeding, egg data might not correct.");
+                        }
+                        else {
+                            eggs.get(i).setBirdBreedingId(birdBreedingInfo);
+                        }
+                    }
+                }
+
+                Optional<Farm> farm =  farmService.findById(affiliation);
+                Farm farmEntity = farm.get();
+                birdBreedingInfo.setAffiliation(farmEntity);
+                farmEntity.getHaveBreedings().add(birdBreedingInfo);
+                //db
+                maleBird.get().setBirdStatus("Paired");
+                femaleBird.get().setBirdStatus("Paired");
+                maleBird.get().setParingBirdId(femaleBird.get());
+                femaleBird.get().setParingBirdId(maleBird.get());
+                //return
+                birdBreedingInfo.getHaveMale().setBirdStatus("Paired");
+                birdBreedingInfo.getHaveFemale().setBirdStatus("Paired");
+
+                BirdBreeding output = birdBreedingService.saveBirdBreedingInfo(birdBreedingInfo);
+                return ResponseEntity.ok(LabMapper.INSTANCE.getBirdBreedingDTO(output));
+            }else {
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird breeding, some data might not correct.");
+            }
+
+        }else {
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird breeding, some data might not correct.");
+        }
+    }
 
     @GetMapping("/viewBirdBreedingDetail/{id}")
     public ResponseEntity<?> viewBirdBreedingDetail(@PathVariable Long id) {
@@ -160,12 +190,18 @@ public class BirdBreedingController {
 
         if (user != null && target.isPresent()) {
             if (user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+                //db
+                target.get().getHaveMale().setBirdStatus("Available");
+                target.get().getHaveFemale().setBirdStatus("Available");
+                target.get().getHaveMale().setParingBirdId(null);
+                target.get().getHaveFemale().setParingBirdId(null);
                 birdBreedingService.deleteBirdBreedingById(id);
                 return ResponseEntity.ok(LabMapper.INSTANCE.getBirdBreedingDTO(target.get()));
             }
             else if (user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_OWNER)) {
                 Long affiliation = user.getAffiliation().getId();
                 if(Objects.equals(affiliation, target.get().getAffiliation().getId())){
+
                     birdBreedingService.deleteBirdBreedingById(id);
                     return ResponseEntity.ok(LabMapper.INSTANCE.getBirdBreedingDTO(target.get()));
                 }
