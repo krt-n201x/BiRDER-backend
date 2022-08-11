@@ -4,5 +4,6 @@ import java.util.List;
 
 public interface EggService {
 
-    List<Long> deleteEggByBirdBreedingId(Long birdBreedingId);
+    Long deleteEggByBirdBreedingId(Long birdBreedingId);
+//    Long deleteEggById(Long birdBreedingId);
 }

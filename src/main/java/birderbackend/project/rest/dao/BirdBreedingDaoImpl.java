@@ -22,6 +22,11 @@ public class BirdBreedingDaoImpl implements BirdBreedingDao {
     }
 
     @Override
+    public BirdBreeding getBirdBreeding(Long id) {
+        return birdBreedingRepository.findById(id).orElse(null);
+    }
+
+    @Override
     public Page<BirdBreeding> getBirdBreeding(Long affiliation, Pageable pageRequest) {
         return birdBreedingRepository.findByAffiliation_Id(affiliation, pageRequest);
     }

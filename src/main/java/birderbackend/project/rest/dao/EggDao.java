@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface EggDao {
 
-    List<Long> deleteEggByBirdBreedingId(Long birdBreedingId);
+    Long deleteEggByBirdBreedingId(Long birdBreedingId);
 
+//    Long deleteEggById(Long birdBreedingId);
 }

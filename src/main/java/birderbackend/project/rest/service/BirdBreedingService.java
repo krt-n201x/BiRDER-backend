@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface BirdBreedingService {
     Optional<BirdBreeding> findById(Long id);
+    BirdBreeding getBirdBreeding(Long id);
     Page<BirdBreeding> getBirdBreeding(Long affiliation, Pageable pageRequest);
 
     Page<BirdBreeding> getSearchBirdBreedingList(Long affiliation, String breedingCageNumber, Long affiliation2, Long haveMale_id, Long affiliation3, Long haveFemale_id, Long affiliation4, String breedingStatus, Pageable pageable);

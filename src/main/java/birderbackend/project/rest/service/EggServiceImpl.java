@@ -13,7 +13,12 @@ public class EggServiceImpl implements EggService{
     EggDao eggDao;
 
     @Transactional
-    public List<Long> deleteEggByBirdBreedingId(Long birdBreedingId) {
+    public Long deleteEggByBirdBreedingId(Long birdBreedingId) {
         return eggDao.deleteEggByBirdBreedingId(birdBreedingId);
     }
+//    @Transactional
+//    @Override
+//    public Long deleteEggById(Long birdBreedingId) {
+//        return eggDao.deleteEggById(birdBreedingId);
+//    }
 }

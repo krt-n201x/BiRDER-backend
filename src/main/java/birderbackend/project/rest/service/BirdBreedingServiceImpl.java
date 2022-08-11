@@ -22,6 +22,11 @@ public class BirdBreedingServiceImpl implements BirdBreedingService{
     }
 
     @Override
+    public BirdBreeding getBirdBreeding(Long id) {
+        return birdBreedingDao.getBirdBreeding(id);
+    }
+
+    @Override
     public Page<BirdBreeding> getBirdBreeding(Long affiliation, Pageable pageRequest) {
         return birdBreedingDao.getBirdBreeding(affiliation, pageRequest);
     }

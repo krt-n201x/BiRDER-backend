@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface EggRepository extends JpaRepository<Egg,Long> {
 
-    List<Long> deleteEggByBirdBreedingId_Id(Long birdBreedingId);
-
+    Long deleteEggsByBirdBreedingId_Id(Long birdBreedingId);
 }

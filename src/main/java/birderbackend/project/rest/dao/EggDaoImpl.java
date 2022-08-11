@@ -12,7 +12,12 @@ public class EggDaoImpl implements EggDao{
     EggRepository eggRepository;
 
 
-    public List<Long> deleteEggByBirdBreedingId(Long birdBreedingId) {
-        return eggRepository.deleteEggByBirdBreedingId_Id(birdBreedingId);
+    public Long deleteEggByBirdBreedingId(Long birdBreedingId) {
+        return eggRepository.deleteEggsByBirdBreedingId_Id(birdBreedingId);
     }
+
+//    @Override
+//    public Long deleteEggById(Long birdBreedingId) {
+//        return eggRepository.deleteEggsByBirdBreedingId_Id(birdBreedingId);
+//    }
 }

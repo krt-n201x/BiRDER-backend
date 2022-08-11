@@ -180,6 +180,104 @@ public class BirdBreedingController {
         return output.get();
     }
 
+    @PostMapping("/updateBirdBreedingDetail/{id}")
+    public ResponseEntity<?> updateBirdBreedingDetail(@RequestBody BirdBreeding birdBreedingInfo, @PathVariable Long id
+            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
+
+        BirdBreeding target = birdBreedingService.getBirdBreeding(id);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        if (       !birdBreedingInfo.getBreedingCageNumber().equals("") && !birdBreedingInfo.getBreedingClutch().equals("")
+                && birdBreedingInfo.getBreedingDate()!=null && !birdBreedingInfo.getBreedingStatus().equals("")
+                && birdBreedingInfo.getHaveMale()!=null && birdBreedingInfo.getHaveFemale()!=null) {
+
+            Optional<Bird> maleBird = birdService.findById(birdBreedingInfo.getHaveMale().getId());
+            Optional<Bird> femaleBird = birdService.findById(birdBreedingInfo.getHaveFemale().getId());
+
+//            System.out.println(maleBird.isPresent());
+//            System.out.println(femaleBird.isPresent());
+//            System.out.println(maleBird.get().getAffiliation().getId().equals(affiliation));
+//            System.out.println(femaleBird.get().getAffiliation().getId().equals(affiliation));
+//            System.out.println(!maleBird.get().getSexOfBird().equals(femaleBird.get().getSexOfBird()));
+//            System.out.println(maleBird.get().getBirdStatus().equals("Available"));
+//            System.out.println(femaleBird.get().getBirdStatus().equals("Available"));
+
+            if( maleBird.isPresent() && femaleBird.isPresent()
+                    && maleBird.get().getAffiliation().getId().equals(affiliation)
+                    && femaleBird.get().getAffiliation().getId().equals(affiliation)
+                    && !maleBird.get().getSexOfBird().equals(femaleBird.get().getSexOfBird())){
+
+                target.setBreedingCageNumber(birdBreedingInfo.getBreedingCageNumber());
+                target.setBreedingClutch(birdBreedingInfo.getBreedingClutch());
+                target.setBreedingDate(birdBreedingInfo.getBreedingDate());
+                target.setBreedingStatus(birdBreedingInfo.getBreedingStatus());
+
+                //change pair bird
+                if(!target.getHaveMale().equals(maleBird.get())){
+                    target.getHaveMale().setBirdStatus("Available");
+                    target.setHaveMale(maleBird.get());
+                }
+                if(!target.getHaveFemale().equals(femaleBird.get())){
+                    target.getHaveFemale().setBirdStatus("Available");
+                    target.setHaveFemale(femaleBird.get());
+                }
+
+                if(target.getBreedingStatus().equals("Done")){
+                    //db
+                    maleBird.get().setBirdStatus("Available");
+                    femaleBird.get().setBirdStatus("Available");
+                    maleBird.get().setParingBirdId(null);
+                    femaleBird.get().setParingBirdId(null);
+                    //return
+                    target.getHaveMale().setBirdStatus("Available");
+                    target.getHaveFemale().setBirdStatus("Available");
+                }
+                else {
+                    //db
+                    maleBird.get().setBirdStatus("Paired");
+                    femaleBird.get().setBirdStatus("Paired");
+                    maleBird.get().setParingBirdId(femaleBird.get());
+                    femaleBird.get().setParingBirdId(maleBird.get());
+                    //return
+                    target.getHaveMale().setBirdStatus("Paired");
+                    target.getHaveFemale().setBirdStatus("Paired");
+                }
+
+                //delete egg
+                eggService.deleteEggByBirdBreedingId(id);
+                target.getHaveEggs().clear();
+                if(birdBreedingInfo.getHaveEggs()!=null){
+                    List<Egg> eggs = birdBreedingInfo.getHaveEggs();
+                    for(int i=0; i<eggs.size(); i++){
+                        if( eggs.get(i).getLayDate() == null || eggs.get(i).getEggType().equals("")
+                                || eggs.get(i).getEggStatus().equals("")){
+                            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird breeding, egg data might not correct.");
+                        }
+                        else {
+                            target.getHaveEggs().add(eggs.get(i));
+                            eggs.get(i).setBirdBreedingId(target);
+                        }
+                    }
+                }
+
+                BirdBreeding output = birdBreedingService.saveBirdBreedingInfo(target);
+                return ResponseEntity.ok(LabMapper.INSTANCE.getBirdBreedingDTO(output));
+            }else {
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird breeding, some data might not correct.");
+            }
+
+        }else {
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird breeding, some data might not correct.");
+        }
+    }
+
     @PostMapping("/deleteBirdBreeding/{id}")
     public ResponseEntity<?> deleteBirdBreeding(@PathVariable("id") Long id) {
 
