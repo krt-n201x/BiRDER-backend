@@ -35,4 +35,6 @@ public interface LabMapper {
 
     BirdBreedingDTO getBirdBreedingDTO(BirdBreeding birds);
 
+    PedigreeDTO getBirdPedigreeDTO(Bird bird);
+
 }

@@ -316,4 +316,31 @@ public class BirdBreedingController {
         }
     }
 
+    @GetMapping("/viewBirdBreedingPedigree/{id}")
+    public ResponseEntity<?> viewBirdBreedingPedigree(@PathVariable Long id) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        Optional<Bird> bird = birdService.findById(id);
+
+        AtomicReference<ResponseEntity<PedigreeDTO>> output = new AtomicReference<>();
+        bird.ifPresentOrElse(bp -> {
+            if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+                Long affiliation = user.getAffiliation().getId();
+                if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)
+                        && bp.getAffiliation().getId().equals(affiliation)) {
+                    output.set(ResponseEntity.ok(LabMapper.INSTANCE.getBirdPedigreeDTO(bp)));
+                } else {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.", id));
+                }
+            } else {
+                output.set(ResponseEntity.ok(LabMapper.INSTANCE.getBirdPedigreeDTO(bp)));
+            }
+        }, () -> {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.", id));
+        });
+        return output.get();
+    }
+
 }

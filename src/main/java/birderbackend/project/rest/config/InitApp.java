@@ -451,8 +451,8 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .birdImage("https://banner2.cleanpng.com/20180211/pcq/kisspng-bird-cockatiel-dog-cockatoo-rope-parrot-5a807f3e5a04f6.2532320115183706223687.jpg")
                 .birdTreatmentRecord("No record")
                 .birdStatus("Available")
-//                .maleParentId()
-//                .femaleParentId()
+                .maleParentId(bird4)
+                .femaleParentId(bird5)
 //                .paringBirdId("2")
 //                .affiliation(1)
                 .build();
@@ -483,8 +483,8 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .birdImage("https://banner2.cleanpng.com/20180211/pcq/kisspng-bird-cockatiel-dog-cockatoo-rope-parrot-5a807f3e5a04f6.2532320115183706223687.jpg")
                 .birdTreatmentRecord("No record")
                 .birdStatus("Available")
-//                .maleParentId()
-//                .femaleParentId()
+                .maleParentId(bird6)
+                .femaleParentId(bird8)
 //                .paringBirdId("2")
 //                .affiliation(1)
                 .build();
@@ -499,8 +499,8 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .birdImage("https://banner2.cleanpng.com/20180211/pcq/kisspng-bird-cockatiel-dog-cockatoo-rope-parrot-5a807f3e5a04f6.2532320115183706223687.jpg")
                 .birdTreatmentRecord("No record")
                 .birdStatus("Available")
-//                .maleParentId()
-//                .femaleParentId()
+                .maleParentId(bird7)
+                .femaleParentId(bird9)
 //                .paringBirdId("2")
 //                .affiliation(1)
                 .build();
