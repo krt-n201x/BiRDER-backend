@@ -37,4 +37,5 @@ public interface LabMapper {
 
     PedigreeDTO getBirdPedigreeDTO(Bird bird);
 
+    List<PedigreeDTO> getBirdPedigreeDTO(List<Bird> bird);
 }

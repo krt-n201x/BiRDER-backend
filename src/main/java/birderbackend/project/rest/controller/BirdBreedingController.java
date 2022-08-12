@@ -343,4 +343,20 @@ public class BirdBreedingController {
         return output.get();
     }
 
+
+    @GetMapping("/getMaleOrFemaleBirdListForBreeding")
+    public ResponseEntity<?> getMaleOrFemaleBirdListForBreeding(Long affiliation, String sex){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        List<Bird> pageOutput;
+        pageOutput = birdService.getMaleOrFemaleBirdList(sex, affiliation);
+
+        return ResponseEntity.ok(LabMapper.INSTANCE.getBirdPedigreeDTO(pageOutput));
+    }
 }
