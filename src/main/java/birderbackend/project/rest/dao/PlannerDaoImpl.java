@@ -17,4 +17,9 @@ public class PlannerDaoImpl implements PlannerDao{
     public Page<Planner> getPlanner(Long affiliation, Pageable pageRequest) {
         return plannerRepository.findByAffiliation_Id(affiliation, pageRequest);
     }
+
+    @Override
+    public Page<Planner> getSearchPlannerList(Long affiliation, String planStatus, Long affiliation2, String labelTag, Pageable pageable) {
+        return plannerRepository.findByAffiliation_IdAndPlanStatusContainingIgnoreCaseOrAffiliation_IdAndLabelTagContainingIgnoreCase(affiliation, planStatus, affiliation2, labelTag, pageable);
+    }
 }

@@ -6,4 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface PlannerDao {
     Page<Planner> getPlanner(Long affiliation, Pageable pageRequest);
+
+    Page<Planner> getSearchPlannerList(Long affiliation, String planStatus, Long affiliation2, String labelTag, Pageable pageable);
+
 }
