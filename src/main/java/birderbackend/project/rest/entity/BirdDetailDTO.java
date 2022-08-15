@@ -21,6 +21,6 @@ public class BirdDetailDTO {
     String sexOfBird;
     String birdImage;
     String birdTreatmentRecord;
-    String birdSpecies;
+    BirdSpeciesDTO birdSpeciesId;
     String birdStatus;
 }

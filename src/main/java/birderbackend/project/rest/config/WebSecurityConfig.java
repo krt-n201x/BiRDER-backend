@@ -81,6 +81,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/updateBirdDetail/{id}").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
                 .antMatchers(HttpMethod.POST,"/deleteBird/{id}").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
                 .antMatchers(HttpMethod.GET,"/getMaleOrFemaleBirdList/{id}").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
+                .antMatchers(HttpMethod.GET,"/viewBirdBreedingList").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
+                .antMatchers(HttpMethod.GET,"/searchBirdBreedingList").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
+                .antMatchers(HttpMethod.POST,"/createBirdBreedingDetail").hasAnyRole("ADMIN", "OWNER")
+                .antMatchers(HttpMethod.GET,"/viewBirdBreedingDetail/{id}").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
+                .antMatchers(HttpMethod.POST,"/deleteBirdBreeding/{id}").hasAnyRole("ADMIN", "OWNER")
+                .antMatchers(HttpMethod.POST,"/createBirdBreedingDetail").hasAnyRole("ADMIN", "OWNER")
+                .antMatchers(HttpMethod.POST,"/updateBirdBreedingDetail/{id}").hasAnyRole("ADMIN", "OWNER")
+                .antMatchers(HttpMethod.GET,"/viewBirdBreedingPedigree/{id}").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
+                .antMatchers(HttpMethod.GET,"/getMaleOrFemaleBirdListForBreeding").hasAnyRole("ADMIN", "OWNER")
 
 
 //                .antMatchers(HttpMethod.GET,"/events").permitAll()
