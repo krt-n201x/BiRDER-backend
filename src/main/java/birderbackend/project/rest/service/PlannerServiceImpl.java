@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PlannerServiceImpl implements PlannerService{
 
@@ -26,5 +28,10 @@ public class PlannerServiceImpl implements PlannerService{
     @Override
     public Planner savePlannerInfo(Planner plannerInfo) {
         return plannerDao.savePlannerInfo(plannerInfo);
+    }
+
+    @Override
+    public Optional<Planner> findById(Long id) {
+        return plannerDao.findById(id);
     }
 }

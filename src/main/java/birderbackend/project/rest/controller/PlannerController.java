@@ -1,9 +1,6 @@
 package birderbackend.project.rest.controller;
 
-import birderbackend.project.rest.entity.Bird;
-import birderbackend.project.rest.entity.BirdBreeding;
-import birderbackend.project.rest.entity.Farm;
-import birderbackend.project.rest.entity.Planner;
+import birderbackend.project.rest.entity.*;
 import birderbackend.project.rest.security.entity.AuthorityName;
 import birderbackend.project.rest.security.entity.User;
 import birderbackend.project.rest.service.BirdService;
@@ -23,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 public class PlannerController {
@@ -120,5 +118,32 @@ public class PlannerController {
 //            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create planner, some data might not correct.");
         }
+    }
+
+    @GetMapping("/viewPlannerDetail/{id}")
+    public ResponseEntity<?> viewPlannerDetail(@PathVariable Long id) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        Optional<Planner> planner = plannerService.findById(id);
+
+        AtomicReference<ResponseEntity<PlannerDTO>> output = new AtomicReference<>();
+        planner.ifPresentOrElse(pn -> {
+            if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+                Long affiliation = user.getAffiliation().getId();
+                if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)
+                        && pn.getAffiliation().getId().equals(affiliation)) {
+                    output.set(ResponseEntity.ok(LabMapper.INSTANCE.getPlannerDTO(pn)));
+                } else {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.", id));
+                }
+            } else {
+                output.set(ResponseEntity.ok(LabMapper.INSTANCE.getPlannerDTO(pn)));
+            }
+        }, () -> {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.", id));
+        });
+        return output.get();
     }
 }

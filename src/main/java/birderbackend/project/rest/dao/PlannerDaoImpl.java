@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public class PlannerDaoImpl implements PlannerDao{
 
@@ -26,5 +28,10 @@ public class PlannerDaoImpl implements PlannerDao{
     @Override
     public Planner savePlannerInfo(Planner plannerInfo) {
         return plannerRepository.save(plannerInfo);
+    }
+
+    @Override
+    public Optional<Planner> findById(Long id) {
+        return plannerRepository.findById(id);
     }
 }
