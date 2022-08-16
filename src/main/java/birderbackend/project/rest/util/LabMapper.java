@@ -40,4 +40,6 @@ public interface LabMapper {
     List<PedigreeDTO> getBirdPedigreeDTO(List<Bird> bird);
 
     List<PlannerDTO> getPlannerDTO(List<Planner> planner);
+
+    PlannerDTO getPlannerDTO(Planner planner);
 }

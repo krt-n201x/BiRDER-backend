@@ -2,9 +2,12 @@ package birderbackend.project.rest.controller;
 
 import birderbackend.project.rest.entity.Bird;
 import birderbackend.project.rest.entity.BirdBreeding;
+import birderbackend.project.rest.entity.Farm;
 import birderbackend.project.rest.entity.Planner;
 import birderbackend.project.rest.security.entity.AuthorityName;
 import birderbackend.project.rest.security.entity.User;
+import birderbackend.project.rest.service.BirdService;
+import birderbackend.project.rest.service.FarmService;
 import birderbackend.project.rest.service.PlannerService;
 import birderbackend.project.rest.service.UserService;
 import birderbackend.project.rest.util.LabMapper;
@@ -16,9 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @RestController
 public class PlannerController {
@@ -28,6 +32,12 @@ public class PlannerController {
 
     @Autowired
     PlannerService plannerService;
+
+    @Autowired
+    FarmService farmService;
+
+    @Autowired
+    BirdService birdService;
 
     @GetMapping("/viewPlannerList")
     public ResponseEntity<?> getPlannerList(@RequestParam(value = "_limit", required = false) Integer perPage
@@ -77,4 +87,38 @@ public class PlannerController {
 
     }
 
+    @PostMapping("/createPlannerDetail")
+    public ResponseEntity<?> createPlannerDetail(@RequestBody Planner plannerInfo
+            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        if (       !plannerInfo.getTitle().equals("") && !plannerInfo.getDescription().equals("")
+                && plannerInfo.getDateOfPlan() != null && plannerInfo.getTimeOfPlan()!= null
+                && !plannerInfo.getPlanStatus().equals("") && !plannerInfo.getLabelTag().equals("") ) {
+
+            if(plannerInfo.getBirdId() != null){
+                if(birdService.getBird(plannerInfo.getBirdId().getId()) == null){
+                    throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create planner, some data might not correct.");
+                }
+            }
+
+            Optional<Farm> farm =  farmService.findById(affiliation);
+            Farm farmEntity = farm.get();
+            plannerInfo.setAffiliation(farmEntity);
+            farmEntity.getHavePlans().add(plannerInfo);
+
+            Planner output = plannerService.savePlannerInfo(plannerInfo);
+            return ResponseEntity.ok(LabMapper.INSTANCE.getPlannerDTO(output));
+
+        }else {
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create planner, some data might not correct.");
+        }
+    }
 }

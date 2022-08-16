@@ -22,4 +22,9 @@ public class PlannerServiceImpl implements PlannerService{
     public Page<Planner> getSearchPlannerList(Long affiliation, String planStatus, Long affiliation2, String labelTag, Pageable pageable) {
         return plannerDao.getSearchPlannerList(affiliation, planStatus, affiliation2, labelTag, pageable);
     }
+
+    @Override
+    public Planner savePlannerInfo(Planner plannerInfo) {
+        return plannerDao.savePlannerInfo(plannerInfo);
+    }
 }

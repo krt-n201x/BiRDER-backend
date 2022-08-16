@@ -92,7 +92,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/getMaleOrFemaleBirdListForBreeding").hasAnyRole("ADMIN", "OWNER")
                 .antMatchers(HttpMethod.GET,"/viewPlannerList").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
                 .antMatchers(HttpMethod.GET,"/searchPlannerList").hasAnyRole("ADMIN", "OWNER", "EMPLOYEE")
-
+                .antMatchers(HttpMethod.POST,"/createPlannerDetail").hasAnyRole("ADMIN", "OWNER")
 
 
 //                .antMatchers(HttpMethod.GET,"/events").permitAll()
