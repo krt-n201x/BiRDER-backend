@@ -76,6 +76,11 @@ public class BirdServiceImpl implements BirdService{
         return birdDao.getMaleOrFemaleBirdListNoSelf(sexOfBird, affiliation, birdId);
     }
 
+    @Override
+    public List<Bird> getBirdListWithoutPaging(Long affiliation_id) {
+        return birdDao.getBirdListWithoutPaging(affiliation_id);
+    }
+
 
 //    @Transactional
 //    public Long deleteBirdById(Long id) {

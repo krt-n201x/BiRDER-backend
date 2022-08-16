@@ -67,6 +67,11 @@ public class BirdDaoImpl implements BirdDao{
         return birdRepository.findBySexOfBirdAndAffiliation_IdAndIdNot(sexOfBird, affiliation, birdId);
     }
 
+    @Override
+    public List<Bird> getBirdListWithoutPaging(Long affiliation_id) {
+        return birdRepository.findByAffiliation_Id(affiliation_id);
+    }
+
 //    public Long deleteBirdById(Long id) {return birdRepository.deleteBirdById(id);}
 
 
