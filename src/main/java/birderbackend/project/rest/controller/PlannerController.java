@@ -146,4 +146,47 @@ public class PlannerController {
         });
         return output.get();
     }
+
+    @PostMapping("/updatePlannerDetail/{id}")
+    public ResponseEntity<?> updatePlannerDetail(@RequestBody Planner plannerInfo, @PathVariable Long id
+            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
+
+        Planner target = plannerService.getPlanner(id);
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        User user = userService.findByUsername(auth.getName());
+//
+//        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+//            affiliation = user.getAffiliation().getId();
+//        }
+
+        if (       !plannerInfo.getTitle().equals("") && !plannerInfo.getDescription().equals("")
+                && plannerInfo.getDateOfPlan() != null && plannerInfo.getTimeOfPlan()!= null
+                && !plannerInfo.getPlanStatus().equals("") && !plannerInfo.getLabelTag().equals("") ) {
+
+            if(plannerInfo.getBirdId() != null){
+                if(birdService.getBird(plannerInfo.getBirdId().getId()) == null){
+                    throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create planner, some data might not correct.");
+                }
+                else {
+                    target.setBirdId(plannerInfo.getBirdId());
+                }
+            }
+
+            target.setTitle(plannerInfo.getTitle());
+            target.setDescription(plannerInfo.getDescription());
+            target.setDateOfPlan(plannerInfo.getDateOfPlan());
+            target.setTimeOfPlan(plannerInfo.getTimeOfPlan());
+            target.setPlanStatus(plannerInfo.getPlanStatus());
+            target.setLabelTag(plannerInfo.getLabelTag());
+
+//            Optional<Farm> farm =  farmService.findById(affiliation);
+
+            Planner output = plannerService.savePlannerInfo(target);
+            return ResponseEntity.ok(LabMapper.INSTANCE.getPlannerDTO(output));
+
+        }else {
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create planner, some data might not correct.");
+        }
+    }
 }

@@ -34,4 +34,9 @@ public class PlannerServiceImpl implements PlannerService{
     public Optional<Planner> findById(Long id) {
         return plannerDao.findById(id);
     }
+
+    @Override
+    public Planner getPlanner(Long id) {
+        return plannerDao.getPlanner(id);
+    }
 }

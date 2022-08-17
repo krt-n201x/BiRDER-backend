@@ -34,4 +34,9 @@ public class PlannerDaoImpl implements PlannerDao{
     public Optional<Planner> findById(Long id) {
         return plannerRepository.findById(id);
     }
+
+    @Override
+    public Planner getPlanner(Long id) {
+        return plannerRepository.findById(id).orElse(null);
+    }
 }

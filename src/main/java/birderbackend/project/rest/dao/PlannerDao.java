@@ -14,4 +14,5 @@ public interface PlannerDao {
 
     Planner savePlannerInfo(Planner plannerInfo);
     Optional<Planner> findById(Long id);
+    Planner getPlanner(Long id);
 }
