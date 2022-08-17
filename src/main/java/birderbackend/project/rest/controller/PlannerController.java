@@ -189,4 +189,33 @@ public class PlannerController {
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create planner, some data might not correct.");
         }
     }
+
+    @PostMapping("/deletePlanner/{id}")
+    public ResponseEntity<?> deletePlanner(@PathVariable("id") Long id) {
+
+        Planner target = plannerService.getPlanner(id);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+        Long affiliation = null;
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        if (target != null) {
+            if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+                if(target.getAffiliation().getId().equals(affiliation)){
+                    plannerService.deletePlannerById(id);
+                    return ResponseEntity.ok(LabMapper.INSTANCE.getPlannerDTO(target));
+                }else {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
+                }
+            }else {
+                plannerService.deletePlannerById(id);
+                return ResponseEntity.ok(LabMapper.INSTANCE.getPlannerDTO(target));
+            }
+        }else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
+        }
+    }
 }

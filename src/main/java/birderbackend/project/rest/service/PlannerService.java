@@ -13,5 +13,6 @@ public interface PlannerService {
     Planner savePlannerInfo(Planner plannerInfo);
     Optional<Planner> findById(Long id);
     Planner getPlanner(Long id);
+    Long deletePlannerById(Long id);
 
 }

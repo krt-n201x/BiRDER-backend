@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -38,5 +39,10 @@ public class PlannerServiceImpl implements PlannerService{
     @Override
     public Planner getPlanner(Long id) {
         return plannerDao.getPlanner(id);
+    }
+
+    @Transactional
+    public Long deletePlannerById(Long id) {
+        return plannerDao.deletePlannerById(id);
     }
 }
