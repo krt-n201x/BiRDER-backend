@@ -22,4 +22,9 @@ public class BirdSpeciesDaoImpl implements BirdSpeciesDao{
     public Page<BirdSpecies> getSearchSpeciesList(Long affiliation_id, String speciesName, Pageable pageable) {
         return birdSpeciesRepository.findByAffiliation_IdAndSpeciesNameContainingIgnoreCase(affiliation_id, speciesName, pageable);
     }
+
+    @Override
+    public BirdSpecies saveBirdSpeciesInfo(BirdSpecies birdSpeciesInfo) {
+        return birdSpeciesRepository.save(birdSpeciesInfo);
+    }
 }

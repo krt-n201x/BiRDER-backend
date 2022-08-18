@@ -22,4 +22,9 @@ public class BirdSpeciesServiceImpl implements BirdSpeciesService{
     public Page<BirdSpecies> getSearchSpeciesList(Long affiliation_id, String speciesName, Pageable pageable) {
         return birdSpeciesDao.getSearchSpeciesList(affiliation_id, speciesName, pageable);
     }
+
+    @Override
+    public BirdSpecies saveBirdSpeciesInfo(BirdSpecies birdSpeciesInfo) {
+        return birdSpeciesDao.saveBirdSpeciesInfo(birdSpeciesInfo);
+    }
 }

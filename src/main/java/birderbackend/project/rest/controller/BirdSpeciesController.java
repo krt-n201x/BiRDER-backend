@@ -1,6 +1,7 @@
 package birderbackend.project.rest.controller;
 
 import birderbackend.project.rest.entity.BirdSpecies;
+import birderbackend.project.rest.entity.Farm;
 import birderbackend.project.rest.entity.Planner;
 import birderbackend.project.rest.security.entity.AuthorityName;
 import birderbackend.project.rest.security.entity.User;
@@ -14,9 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @RestController
 public class BirdSpeciesController {
@@ -79,5 +81,31 @@ public class BirdSpeciesController {
 
     }
 
+    @PostMapping("/createBirdSpeciesDetail")
+    public ResponseEntity<?> createBirdSpeciesDetail(@RequestBody BirdSpecies birdSpeciesInfo
+            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        if (       !birdSpeciesInfo.getSpeciesName().equals("") && !birdSpeciesInfo.getFamilyName().equals("")
+                && !birdSpeciesInfo.getSpeciesColor().equals("")) {
+
+            Optional<Farm> farm =  farmService.findById(affiliation);
+            Farm farmEntity = farm.get();
+            birdSpeciesInfo.setAffiliation(farmEntity);
+            farmEntity.getHaveSpecies().add(birdSpeciesInfo);
+
+            BirdSpecies output = birdSpeciesService.saveBirdSpeciesInfo(birdSpeciesInfo);
+            return ResponseEntity.ok(LabMapper.INSTANCE.getBirdSpeciesDTO(output));
+
+        }else {
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird species, some data might not correct.");
+        }
+    }
 }
