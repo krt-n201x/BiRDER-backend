@@ -7,4 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface BirdSpeciesDao {
     Page<BirdSpecies> getBirdSpecies(Long affiliation, Pageable pageRequest);
+    Page<BirdSpecies> getSearchSpeciesList(Long affiliation_id, String speciesName, Pageable pageable);
 }

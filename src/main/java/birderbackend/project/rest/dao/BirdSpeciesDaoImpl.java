@@ -17,4 +17,9 @@ public class BirdSpeciesDaoImpl implements BirdSpeciesDao{
     public Page<BirdSpecies> getBirdSpecies(Long affiliation, Pageable pageRequest) {
         return birdSpeciesRepository.findByAffiliation_Id(affiliation, pageRequest);
     }
+
+    @Override
+    public Page<BirdSpecies> getSearchSpeciesList(Long affiliation_id, String speciesName, Pageable pageable) {
+        return birdSpeciesRepository.findByAffiliation_IdAndSpeciesNameContainingIgnoreCase(affiliation_id, speciesName, pageable);
+    }
 }

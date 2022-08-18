@@ -53,5 +53,31 @@ public class BirdSpeciesController {
         return new ResponseEntity<>(LabMapper.INSTANCE.getBirdSpeciesDTO(pageOutput.getContent()), responseHeader, HttpStatus.OK);
     }
 
+    @GetMapping("/searchBirdSpeciesList")
+    public ResponseEntity<?> getSearchBirdSpeciesList(@RequestParam(value = "_limit", required = false) Integer perPage
+            , @RequestParam(value = "_page", required = false) Integer page
+            , @RequestParam(value = "speciesName", required = false) String speciesName
+            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        perPage = perPage == null ? 6 : perPage;
+        page = page == null ? 1 : page;
+        Page<BirdSpecies> pageOutput;
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        pageOutput = birdSpeciesService.getSearchSpeciesList(affiliation, speciesName, PageRequest.of(page - 1, perPage));
+
+        HttpHeaders responseHeader = new HttpHeaders();
+        responseHeader.set("x-total-count", String.valueOf(pageOutput.getTotalElements()));
+        System.out.println(pageOutput);
+        return new ResponseEntity<>(LabMapper.INSTANCE.getBirdSpeciesDTO(pageOutput.getContent()), responseHeader, HttpStatus.OK);
+
+    }
+
 
 }

@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BirdSpeciesRepository extends JpaRepository<BirdSpecies,Long> {
     Page<BirdSpecies> findByAffiliation_Id(Long affiliation, Pageable pageRequest);
+    Page<BirdSpecies> findByAffiliation_IdAndSpeciesNameContainingIgnoreCase(Long affiliation_id, String speciesName, Pageable pageable);
 }
