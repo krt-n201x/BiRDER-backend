@@ -13,4 +13,5 @@ public interface BirdSpeciesService {
 
     BirdSpecies saveBirdSpeciesInfo(BirdSpecies birdSpeciesInfo);
     Optional<BirdSpecies> findById(Long id);
+    BirdSpecies getBirdSpecies(Long id);
 }

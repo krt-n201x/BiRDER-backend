@@ -12,4 +12,5 @@ public interface BirdSpeciesDao {
     Page<BirdSpecies> getSearchSpeciesList(Long affiliation_id, String speciesName, Pageable pageable);
     BirdSpecies saveBirdSpeciesInfo(BirdSpecies birdSpeciesInfo);
     Optional<BirdSpecies> findById(Long id);
+    BirdSpecies getBirdSpecies(Long id);
 }

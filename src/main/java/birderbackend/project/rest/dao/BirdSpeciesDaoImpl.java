@@ -34,4 +34,9 @@ public class BirdSpeciesDaoImpl implements BirdSpeciesDao{
     public Optional<BirdSpecies> findById(Long id) {
         return birdSpeciesRepository.findById(id);
     }
+
+    @Override
+    public BirdSpecies getBirdSpecies(Long id) {
+        return birdSpeciesRepository.findById(id).orElse(null);
+    }
 }

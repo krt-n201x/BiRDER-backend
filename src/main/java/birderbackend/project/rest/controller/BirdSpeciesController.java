@@ -134,4 +134,32 @@ public class BirdSpeciesController {
         });
         return output.get();
     }
+
+    @PostMapping("/updateBirdSpeciesDetail/{id}")
+    public ResponseEntity<?> updateBirdSpeciesDetail(@RequestBody BirdSpecies birdSpeciesInfo, @PathVariable Long id
+            , @RequestParam(value = "affiliation", required = false) Long affiliation) {
+
+        BirdSpecies target = birdSpeciesService.getBirdSpecies(id);
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        User user = userService.findByUsername(auth.getName());
+//
+//        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+//            affiliation = user.getAffiliation().getId();
+//        }
+
+        if (       !birdSpeciesInfo.getSpeciesName().equals("") && !birdSpeciesInfo.getFamilyName().equals("")
+                && !birdSpeciesInfo.getSpeciesColor().equals("")) {
+
+            target.setSpeciesName(birdSpeciesInfo.getSpeciesName());
+            target.setFamilyName(birdSpeciesInfo.getFamilyName());
+            target.setSpeciesColor(birdSpeciesInfo.getSpeciesColor());
+
+            BirdSpecies output = birdSpeciesService.saveBirdSpeciesInfo(target);
+            return ResponseEntity.ok(LabMapper.INSTANCE.getBirdSpeciesDTO(output));
+
+        }else {
+//            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird species, some data might not correct.");
+        }
+    }
 }
