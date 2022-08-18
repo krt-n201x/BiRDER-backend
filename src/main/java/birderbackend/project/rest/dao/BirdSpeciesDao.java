@@ -5,6 +5,7 @@ import birderbackend.project.rest.entity.Planner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BirdSpeciesDao {
@@ -13,4 +14,5 @@ public interface BirdSpeciesDao {
     BirdSpecies saveBirdSpeciesInfo(BirdSpecies birdSpeciesInfo);
     Optional<BirdSpecies> findById(Long id);
     BirdSpecies getBirdSpecies(Long id);
+    List<BirdSpecies> getBirdSpeciesListWithoutPaging(Long affiliation_id);
 }

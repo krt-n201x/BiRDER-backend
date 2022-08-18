@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -161,5 +162,21 @@ public class BirdSpeciesController {
 //            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird species, some data might not correct.");
         }
+    }
+
+    @GetMapping("/getBirdSpeciesListWithoutPaging")
+    public ResponseEntity<?> getBirdSpeciesListWithoutPaging(Long affiliation){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        List<BirdSpecies> pageOutput;
+        pageOutput = birdSpeciesService.getBirdSpeciesListWithoutPaging(affiliation);
+
+        return ResponseEntity.ok(LabMapper.INSTANCE.getBirdSpeciesDTO(pageOutput));
     }
 }

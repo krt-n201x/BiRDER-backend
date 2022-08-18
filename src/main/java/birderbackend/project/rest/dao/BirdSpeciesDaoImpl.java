@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -38,5 +39,10 @@ public class BirdSpeciesDaoImpl implements BirdSpeciesDao{
     @Override
     public BirdSpecies getBirdSpecies(Long id) {
         return birdSpeciesRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<BirdSpecies> getBirdSpeciesListWithoutPaging(Long affiliation_id) {
+        return birdSpeciesRepository.findByAffiliation_Id(affiliation_id);
     }
 }
