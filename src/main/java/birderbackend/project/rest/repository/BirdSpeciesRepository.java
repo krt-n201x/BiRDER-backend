@@ -1,7 +1,11 @@
 package birderbackend.project.rest.repository;
 
 import birderbackend.project.rest.entity.BirdSpecies;
+import birderbackend.project.rest.entity.Planner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BirdSpeciesRepository extends JpaRepository<BirdSpecies,Long> {
+    Page<BirdSpecies> findByAffiliation_Id(Long affiliation, Pageable pageRequest);
 }

@@ -43,5 +43,7 @@ public interface LabMapper {
 
     PlannerDTO getPlannerDTO(Planner planner);
 
+    List<BirdSpeciesDTO> getBirdSpeciesDTO(List<BirdSpecies> birdSpecies);
+
 
 }
