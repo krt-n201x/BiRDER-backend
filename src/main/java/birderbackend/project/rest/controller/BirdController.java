@@ -286,4 +286,20 @@ public class BirdController {
         return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(pageOutput));
     }
 
+    @GetMapping("/getBirdListWithoutPaging")
+    public ResponseEntity<?> getBirdListWithoutPaging(Long affiliation){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        List<Bird> pageOutput;
+        pageOutput = birdService.getBirdListWithoutPaging(affiliation);
+
+        return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(pageOutput));
+    }
+
 }

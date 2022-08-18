@@ -23,4 +23,6 @@ public interface BirdRepository extends JpaRepository<Bird,Long> {
 
     List<Bird> findBySexOfBirdAndAffiliation_IdAndIdNot(String sexOfBird, Long affiliation, Long birdId);
 
+    List<Bird> findByAffiliation_Id(Long affiliation_id);
+
 }
