@@ -45,4 +45,9 @@ public class BirdSpeciesDaoImpl implements BirdSpeciesDao{
     public List<BirdSpecies> getBirdSpeciesListWithoutPaging(Long affiliation_id) {
         return birdSpeciesRepository.findByAffiliation_Id(affiliation_id);
     }
+
+    @Override
+    public Long deleteBirdSpeciesById(Long id) {
+        return birdSpeciesRepository.deleteBirdSpeciesById(id);
+    }
 }

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +45,10 @@ public class BirdSpeciesServiceImpl implements BirdSpeciesService{
     @Override
     public List<BirdSpecies> getBirdSpeciesListWithoutPaging(Long affiliation_id) {
         return birdSpeciesDao.getBirdSpeciesListWithoutPaging(affiliation_id);
+    }
+
+    @Transactional
+    public Long deleteBirdSpeciesById(Long id) {
+        return birdSpeciesDao.deleteBirdSpeciesById(id);
     }
 }

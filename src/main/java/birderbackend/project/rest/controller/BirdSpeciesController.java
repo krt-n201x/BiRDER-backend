@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -161,6 +162,40 @@ public class BirdSpeciesController {
         }else {
 //            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not create bird species, some data might not correct.");
+        }
+    }
+
+    @PostMapping("/deleteBirdSpecies/{id}")
+    public ResponseEntity<?> deleteBirdSpecies(@PathVariable("id") Long id) {
+
+        BirdSpecies target = birdSpeciesService.getBirdSpecies(id);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+        Long affiliation = null;
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        if (target != null) {
+            if(birdService.findByBirdSpeciesId_Id(id).size() == 0) {
+                if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+                    if (target.getAffiliation().getId().equals(affiliation)) {
+                        birdSpeciesService.deleteBirdSpeciesById(id);
+                        return ResponseEntity.ok(LabMapper.INSTANCE.getBirdSpeciesDTO(target));
+                    } else {
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.", id));
+                    }
+                } else {
+                    birdSpeciesService.deleteBirdSpeciesById(id);
+                    return ResponseEntity.ok(LabMapper.INSTANCE.getBirdSpeciesDTO(target));
+                }
+            } else{
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Cannot delete, this species is used by some birds.",id));
+            }
+        }else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
         }
     }
 

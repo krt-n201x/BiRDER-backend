@@ -15,4 +15,5 @@ public interface BirdSpeciesDao {
     Optional<BirdSpecies> findById(Long id);
     BirdSpecies getBirdSpecies(Long id);
     List<BirdSpecies> getBirdSpeciesListWithoutPaging(Long affiliation_id);
+    Long deleteBirdSpeciesById(Long id);
 }
