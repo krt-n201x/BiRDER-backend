@@ -138,6 +138,8 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
         farm1.getHaveSpecies().add(species1);
         species3.setAffiliation(farm1);
         farm1.getHaveSpecies().add(species3);
+        species6.setAffiliation(farm1);
+        farm1.getHaveSpecies().add(species6);
 
         species2.setAffiliation(farm2);
         farm2.getHaveSpecies().add(species2);
@@ -547,12 +549,18 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .familyName("Psittacidae")
                 .speciesColor("Grey and Yellow")
                 .build();
+        species6 = BirdSpecies.builder()
+                .speciesName("Conure")
+                .familyName("Psittacidae")
+                .speciesColor("Grey and Yellow and Pastel")
+                .build();
 
         birdSpeciesRepository.save(species1);
         birdSpeciesRepository.save(species2);
         birdSpeciesRepository.save(species3);
         birdSpeciesRepository.save(species4);
         birdSpeciesRepository.save(species5);
+        birdSpeciesRepository.save(species6);
     }
 
     Planner planner1, planner2, planner3, planner4, planner5;

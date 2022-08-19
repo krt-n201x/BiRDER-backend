@@ -81,6 +81,11 @@ public class BirdServiceImpl implements BirdService{
         return birdDao.getBirdListWithoutPaging(affiliation_id);
     }
 
+    @Override
+    public List<Bird> findByBirdSpeciesId_Id(Long birdSpeciesId_id) {
+        return birdDao.findByBirdSpeciesId_Id(birdSpeciesId_id);
+    }
+
 
 //    @Transactional
 //    public Long deleteBirdById(Long id) {

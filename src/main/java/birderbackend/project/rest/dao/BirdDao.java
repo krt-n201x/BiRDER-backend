@@ -29,5 +29,6 @@ public interface BirdDao {
     List<Bird> getMaleOrFemaleBirdList(String sexOfBird, Long id);
     List<Bird> getMaleOrFemaleBirdListNoSelf(String sexOfBird, Long affiliation, Long birdId);
     List<Bird> getBirdListWithoutPaging(Long affiliation_id);
+    List<Bird> findByBirdSpeciesId_Id(Long birdSpeciesId_id);
 
 }

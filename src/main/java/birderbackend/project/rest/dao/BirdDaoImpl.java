@@ -72,6 +72,11 @@ public class BirdDaoImpl implements BirdDao{
         return birdRepository.findByAffiliation_Id(affiliation_id);
     }
 
+    @Override
+    public List<Bird> findByBirdSpeciesId_Id(Long birdSpeciesId_id) {
+        return birdRepository.findByBirdSpeciesId_Id(birdSpeciesId_id);
+    }
+
 //    public Long deleteBirdById(Long id) {return birdRepository.deleteBirdById(id);}
 
 
