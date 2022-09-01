@@ -361,6 +361,6 @@ public class BirdBreedingController {
         List<Bird> pageOutput;
         pageOutput = birdService.getMaleOrFemaleBirdList(sex, affiliation);
 
-        return ResponseEntity.ok(LabMapper.INSTANCE.getBirdPedigreeDTO(pageOutput));
+        return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(pageOutput));
     }
 }
