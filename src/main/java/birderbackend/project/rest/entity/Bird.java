@@ -4,7 +4,9 @@ import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -49,9 +51,9 @@ public class Bird {
 //    @NotNull
     private String birdTreatmentRecord;
 
-    @Column(name = "BIRDSPECIES", length = 50)
-    @NotNull
-    private String birdSpecies;
+//    @Column(name = "BIRDSPECIES", length = 50)
+//    @NotNull
+//    private String birdSpecies;
 
     @Column(name = "BIRDSTATUS", length = 50)
     @NotNull
@@ -68,5 +70,20 @@ public class Bird {
 
     @ManyToOne(fetch = FetchType.EAGER)
     Farm affiliation;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    BirdSpecies birdSpeciesId;
+
+    @OneToMany (mappedBy = "birdId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    List<Planner> recordIn = new ArrayList<>();
+
+    @OneToMany (mappedBy = "haveMale", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    List<BirdBreeding> breedMe = new ArrayList<>();
+
+    @OneToMany (mappedBy = "haveFemale", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    List<BirdBreeding> breedFe = new ArrayList<>();
 
 }

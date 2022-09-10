@@ -25,4 +25,16 @@ public class Farm {
     @OneToMany (mappedBy = "affiliation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     List<Bird> haveBirds = new ArrayList<>();
+
+    @OneToMany (mappedBy = "affiliation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    List<BirdBreeding> haveBreedings = new ArrayList<>();
+
+    @OneToMany (mappedBy = "affiliation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    List<BirdSpecies> haveSpecies = new ArrayList<>();
+
+    @OneToMany (mappedBy = "affiliation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    List<Planner> havePlans = new ArrayList<>();
 }

@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -99,7 +100,7 @@ public class BirdController {
         if (       !birdInfo.getBirdName().equals("")
                 && !birdInfo.getBirdCode().equals("") && !birdInfo.getDateOfBirth().equals("") && !birdInfo.getBirdColor().equals("")
                 && !birdInfo.getCageNumber().equals("") && !birdInfo.getSexOfBird().equals("") && !birdInfo.getBirdImage().equals("")
-                && !birdInfo.getBirdSpecies().equals("") && !birdInfo.getBirdStatus().equals("")) {
+                && birdInfo.getBirdSpeciesId()!=null && !birdInfo.getBirdStatus().equals("")) {
             if(birdService.getSearchByBirdNameBirdCode(
                     affiliation, birdInfo.getBirdName(), affiliation, birdInfo.getBirdCode()) == null){
                 if(user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_EMPLOYEE)){
@@ -188,7 +189,7 @@ public class BirdController {
         if (       !birdInfo.getBirdName().equals("")
                 && !birdInfo.getBirdCode().equals("") && !birdInfo.getDateOfBirth().equals("") && !birdInfo.getBirdColor().equals("")
                 && !birdInfo.getCageNumber().equals("") && !birdInfo.getSexOfBird().equals("") && !birdInfo.getBirdImage().equals("")
-                && !birdInfo.getBirdSpecies().equals("") && !birdInfo.getBirdStatus().equals("")) {
+                && birdInfo.getBirdSpeciesId()!=null && !birdInfo.getBirdStatus().equals("")) {
 
 
             if((birdService.getSearchByBirdName(affiliation, birdInfo.getBirdName())== null || // new name not duplicate other birds in db
@@ -203,7 +204,7 @@ public class BirdController {
                 target.setSexOfBird(birdInfo.getSexOfBird());
                 target.setBirdImage(birdInfo.getBirdImage());
                 target.setBirdTreatmentRecord(birdInfo.getBirdTreatmentRecord());
-                target.setBirdSpecies(birdInfo.getBirdSpecies());
+                target.setBirdSpeciesId(birdInfo.getBirdSpeciesId());
                 target.setBirdStatus(birdInfo.getBirdStatus());
                 target.setMaleParentId(birdInfo.getMaleParentId());
                 target.setFemaleParentId(birdInfo.getFemaleParentId());
@@ -263,4 +264,42 @@ public class BirdController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The given id %n is not found.",id));
         }
     }
+
+    @GetMapping("/getMaleOrFemaleBirdList/{id}")
+    public ResponseEntity<?> getMaleOrFemaleBirdList(@PathVariable Long id, Long affiliation, String sex){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+        Optional<Bird> bird =  birdService.findById(id);
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        List<Bird> pageOutput;
+        if(bird.isPresent()){
+            pageOutput = birdService.getMaleOrFemaleBirdListNoSelf(sex, affiliation, id);
+
+        }else {
+            pageOutput = birdService.getMaleOrFemaleBirdList(sex, affiliation);
+        }
+        return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(pageOutput));
+    }
+
+    @GetMapping("/getBirdListWithoutPaging")
+    public ResponseEntity<?> getBirdListWithoutPaging(Long affiliation){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(auth.getName());
+
+        if (!user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_ADMIN)) {
+            affiliation = user.getAffiliation().getId();
+        }
+
+        List<Bird> pageOutput;
+        pageOutput = birdService.getBirdListWithoutPaging(affiliation);
+
+        return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(pageOutput));
+    }
+
 }

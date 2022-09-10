@@ -31,4 +31,20 @@ public interface LabMapper {
 
     BirdDTO getBirdDTO(Bird bird);
 
+    List<BirdBreedingDTO> getBirdBreedingDTO(List<BirdBreeding> birds);
+
+    BirdBreedingDTO getBirdBreedingDTO(BirdBreeding birds);
+
+    PedigreeDTO getBirdPedigreeDTO(Bird bird);
+
+    List<PedigreeDTO> getBirdPedigreeDTO(List<Bird> bird);
+
+    List<PlannerDTO> getPlannerDTO(List<Planner> planner);
+
+    PlannerDTO getPlannerDTO(Planner planner);
+
+    List<BirdSpeciesDTO> getBirdSpeciesDTO(List<BirdSpecies> birdSpecies);
+    BirdSpeciesDTO getBirdSpeciesDTO(BirdSpecies birdSpecies);
+
+
 }

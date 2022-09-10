@@ -11,7 +11,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BirdDTO {
+public class PedigreeDTO {
     FarmDTO affiliation;
     Long id;
     String birdName;
@@ -24,7 +24,7 @@ public class BirdDTO {
     String birdTreatmentRecord;
     BirdSpeciesDTO birdSpeciesId;
     String birdStatus;
-    BirdDetailDTO maleParentId;
-    BirdDetailDTO femaleParentId;
-    BirdDetailDTO paringBirdId;
+    BirdDTO maleParentId;
+    BirdDTO femaleParentId;
+    BirdDTO paringBirdId;
 }
