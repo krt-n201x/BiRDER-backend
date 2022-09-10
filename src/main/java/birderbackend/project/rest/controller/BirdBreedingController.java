@@ -299,7 +299,11 @@ public class BirdBreedingController {
             else if (user.getAuthorities().get(0).getName().equals(AuthorityName.ROLE_OWNER)) {
                 Long affiliation = user.getAffiliation().getId();
                 if(Objects.equals(affiliation, target.get().getAffiliation().getId())){
-
+                    //db
+                    target.get().getHaveMale().setBirdStatus("Available");
+                    target.get().getHaveFemale().setBirdStatus("Available");
+                    target.get().getHaveMale().setParingBirdId(null);
+                    target.get().getHaveFemale().setParingBirdId(null);
                     birdBreedingService.deleteBirdBreedingById(id);
                     return ResponseEntity.ok(LabMapper.INSTANCE.getBirdBreedingDTO(target.get()));
                 }
@@ -357,6 +361,6 @@ public class BirdBreedingController {
         List<Bird> pageOutput;
         pageOutput = birdService.getMaleOrFemaleBirdList(sex, affiliation);
 
-        return ResponseEntity.ok(LabMapper.INSTANCE.getBirdPedigreeDTO(pageOutput));
+        return ResponseEntity.ok(LabMapper.INSTANCE.getBirdDTO(pageOutput));
     }
 }
